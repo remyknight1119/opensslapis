@@ -12,14 +12,17 @@
 static OapisApi kOsslApis[] = {
     {
         .api = test_match_csr_key,
+        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
         .msg = "Match CSR and Key",
     },
     {
         .api = test_load_key,
+        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
         .msg = "Load Key from file",
     },
     {
         .api = test_match_pkey,
+        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
         .msg = "Match PKey",
     },
 };
@@ -73,6 +76,8 @@ char *oapis_ca;
 
 int main(int argc, char **argv)
 {
+    OapisApi *cs = NULL;
+    int total = 0;
     int passed = 0;
     int i = 0;
     int c = 0;
@@ -134,16 +139,24 @@ int main(int argc, char **argv)
     }
 
     for (i = 0; i < TEST_APIS_NUM; i++) {
-        fprintf(stdout, "Case %s ...", kOsslApis[i].msg);
-        if (kOsslApis[i].api() < 0) {
-            fprintf(stderr, "failed\n");
+        cs = &kOsslApis[i];
+        if (cs->cert_type != OAPIS_CERT_TYPE_UNKNOW &&
+                cs->cert_type != oapis_cert_type) {
+            fprintf(stdout, "Skip case %s ...", cs->msg);
+            continue;
+        }
+
+        fprintf(stdout, "Case %s ...", cs->msg);
+        total++;
+        if (cs->api() < 0) {
+            fprintf(stdout, "failed\n");
             continue;
         }
         passed++;
         fprintf(stdout, "OK\n");
     }
 
-    fprintf(stdout, "%d/%lu testcase passed\n", passed, TEST_APIS_NUM);
+    fprintf(stdout, "%d/%d testcase passed\n", passed, total);
 
     return 0;
 }

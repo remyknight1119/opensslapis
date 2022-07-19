@@ -25,17 +25,17 @@ static int test_load_key_file(const char *file, char *passwd)
 int test_load_key(void)
 {
     if (test_load_key_file(oapis_key, NULL) < 0) {
-        printf("Load key from pem file failed ");
+        printf("Load key from pem file failed\n");
         return -1;
     }
 
     if (test_load_key_file(oapis_key_der, NULL) < 0) {
-        printf("Load key from der file failed ");
+        printf("Load key from der file failed\n");
         return -1;
     }
 
     if (test_load_key_file(oapis_key_enc, oapis_key_pwd) < 0) {
-        printf("Load encrypted key failed ");
+        printf("Load encrypted key failed\n");
         return -1;
     }
 
@@ -57,11 +57,6 @@ int test_match_pkey(void)
 
     if (match_pkey(oapis_key, oapis_cert, NULL) < 0) {
         printf("Match key and cert failed");
-        return -1;
-    }
-
-    if (match_pkey(oapis_key, oapis_ca, NULL) == 0) {
-        printf("Match key and ca cert failed");
         return -1;
     }
 

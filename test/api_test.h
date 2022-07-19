@@ -2,11 +2,13 @@
 #define OPENSSLAPIS_TEST_API_TEST_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define OAPIS_NELEM(array)    (sizeof(array)/sizeof(array[0]))
 
 typedef struct {
     int (*api)(void);
+    uint32_t cert_type;
     const char *msg;
 } OapisApi;
 
