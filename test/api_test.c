@@ -5,6 +5,7 @@
 #include "api_test.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <getopt.h>
 #include <arpa/inet.h>
 
@@ -12,6 +13,14 @@ static OapisApi kOsslApis[] = {
     {
         .api = test_match_csr_key,
         .msg = "Match CSR and Key",
+    },
+    {
+        .api = test_load_key,
+        .msg = "Load Key from file",
+    },
+    {
+        .api = test_match_pkey,
+        .msg = "Match PKey",
     },
 };
 
@@ -28,11 +37,15 @@ static const struct option long_opts[] = {
 };
 
 static const char *options[] = {
-    "--certificate  		-c	certificate file\n",	
-    "--key      		    -k	key file\n",	
-    "--csr      		    -s	csr file\n",	
-    "--ca      		        -a	ca certificate file\n",	
-    "--help         		-H	Print help information\n",	
+    "--certificate  		-c	certificate file\n",
+    "--type  		        -t	type of certificate file(1:RSA, 2:ECDSA)\n",
+    "--key      		    -k	key file\n",
+    "--pwd      		    -p	key file password\n",
+    "--encrypted-file      	-w	key file encrypted with password\n",
+    "--der      		    -d	key file encoded by DER\n",
+    "--csr      		    -s	csr file\n",
+    "--ca      		        -a	ca certificate file\n",
+    "--help         		-H	Print help information\n",
 };
 
 static void help(void)
@@ -47,15 +60,20 @@ static void help(void)
     }
 }
 
-static const char *optstring = "Hda:c:k:s:";
+static const char *optstring = "Ht:a:c:k:s:p:d:w:";
 
+int oapis_cert_type;
 char *oapis_cert;
 char *oapis_key;
+char *oapis_key_pwd;
+char *oapis_key_enc;
+char *oapis_key_der;
 char *oapis_csr;
 char *oapis_ca;
 
 int main(int argc, char **argv)
 {
+    int passed = 0;
     int i = 0;
     int c = 0;
 
@@ -64,6 +82,9 @@ int main(int argc, char **argv)
             case 'H':
                 help();
                 return 0;
+            case 't':
+                oapis_cert_type = atoi(optarg);
+                break;
             case 'c':
                 oapis_cert = optarg;
                 break;
@@ -76,10 +97,25 @@ int main(int argc, char **argv)
             case 's':
                 oapis_csr = optarg;
                 break;
+            case 'p':
+                oapis_key_pwd = optarg;
+                break;
+            case 'd':
+                oapis_key_der = optarg;
+                break;
+            case 'w':
+                oapis_key_enc = optarg;
+                break;
             default:
                 help();
                 return -1;
         }
+    }
+
+    if (oapis_cert_type <= OAPIS_CERT_TYPE_UNKNOW ||
+            oapis_cert_type >= OAPIS_CERT_TYPE_MAX) {
+        fprintf(stderr, "Unknown cert type(%d)\n", oapis_cert_type);
+        return -1;
     }
 
     if (oapis_cert == NULL) {
@@ -101,10 +137,13 @@ int main(int argc, char **argv)
         fprintf(stdout, "Case %s ...", kOsslApis[i].msg);
         if (kOsslApis[i].api() < 0) {
             fprintf(stderr, "failed\n");
-            break;
+            continue;
         }
+        passed++;
         fprintf(stdout, "OK\n");
     }
+
+    fprintf(stdout, "%d/%lu testcase passed\n", passed, TEST_APIS_NUM);
 
     return 0;
 }
