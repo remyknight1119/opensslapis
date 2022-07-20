@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define OAPIS_NELEM(array)    (sizeof(array)/sizeof(array[0]))
+#define OSSLAPIS_RSA_KEY_LEN    4096
 
 typedef struct {
     int (*api)(void);
@@ -12,13 +12,8 @@ typedef struct {
     const char *msg;
 } OapisApi;
 
-enum {
-    OAPIS_CERT_TYPE_UNKNOW,
-    OAPIS_CERT_TYPE_RSA,
-    OAPIS_CERT_TYPE_ECDSA,
-    OAPIS_CERT_TYPE_MAX,
-};
-
+extern int oapis_cert_type;
+extern int oapis_key_bits;
 extern char *oapis_cert;
 extern char *oapis_key;
 extern char *oapis_key_enc;
@@ -30,5 +25,8 @@ extern char *oapis_ca;
 int test_match_csr_key(void);
 int test_match_pkey(void);
 int test_load_key(void);
+int test_match_pkey_type(void);
+int test_match_cert_type(void);
+int test_cert_pubkey_length(void);
 
 #endif

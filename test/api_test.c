@@ -9,21 +9,38 @@
 #include <getopt.h>
 #include <arpa/inet.h>
 
+#include "opensslapis.h"
+
 static OapisApi kOsslApis[] = {
     {
         .api = test_match_csr_key,
-        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "Match CSR and Key",
     },
     {
         .api = test_load_key,
-        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "Load Key from file",
     },
     {
         .api = test_match_pkey,
-        .cert_type = OAPIS_CERT_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "Match PKey",
+    },
+    {
+        .api = test_match_pkey_type,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "Match PKey Type",
+    },
+    {
+        .api = test_match_cert_type,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "Match Cert Type",
+    },
+    {
+        .api = test_cert_pubkey_length,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "Cert Key Bit Length",
     },
 };
 
@@ -48,6 +65,7 @@ static const char *options[] = {
     "--der      		    -d	key file encoded by DER\n",
     "--csr      		    -s	csr file\n",
     "--ca      		        -a	ca certificate file\n",
+    "--len      		    -l	length of key bits\n",
     "--help         		-H	Print help information\n",
 };
 
@@ -63,9 +81,10 @@ static void help(void)
     }
 }
 
-static const char *optstring = "Ht:a:c:k:s:p:d:w:";
+static const char *optstring = "Ht:a:c:k:s:p:d:w:l:";
 
 int oapis_cert_type;
+int oapis_key_bits;
 char *oapis_cert;
 char *oapis_key;
 char *oapis_key_pwd;
@@ -89,6 +108,9 @@ int main(int argc, char **argv)
                 return 0;
             case 't':
                 oapis_cert_type = atoi(optarg);
+                break;
+            case 'l':
+                oapis_key_bits = atoi(optarg);
                 break;
             case 'c':
                 oapis_cert = optarg;
@@ -117,8 +139,8 @@ int main(int argc, char **argv)
         }
     }
 
-    if (oapis_cert_type <= OAPIS_CERT_TYPE_UNKNOW ||
-            oapis_cert_type >= OAPIS_CERT_TYPE_MAX) {
+    if (oapis_cert_type <= OAPIS_KEY_TYPE_UNKNOW ||
+            oapis_cert_type >= OAPIS_KEY_TYPE_MAX) {
         fprintf(stderr, "Unknown cert type(%d)\n", oapis_cert_type);
         return -1;
     }
@@ -140,9 +162,9 @@ int main(int argc, char **argv)
 
     for (i = 0; i < TEST_APIS_NUM; i++) {
         cs = &kOsslApis[i];
-        if (cs->cert_type != OAPIS_CERT_TYPE_UNKNOW &&
+        if (cs->cert_type != OAPIS_KEY_TYPE_UNKNOW &&
                 cs->cert_type != oapis_cert_type) {
-            fprintf(stdout, "Skip case %s ...", cs->msg);
+            fprintf(stdout, "Case %s skip\n", cs->msg);
             continue;
         }
 

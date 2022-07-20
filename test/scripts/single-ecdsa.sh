@@ -19,9 +19,9 @@ key=$param.key
 config=./openssl.cnf
 
 #Server cert
+curves=secp256r1
 curves=prime256v1
 curves=secp521r1
-curves=secp256r1
 openssl ecparam -name $curves -genkey -out $key
 openssl req -new -key $key -sha256 -out $csr -subj $subj -days $expire_days
 openssl x509 -req -in $csr -sha256 -extfile $config -out $cer -CA $cacer -CAkey $cakey -CAserial t_ssl_ca.srl -CAcreateserial -days $expire_days -extensions v3_req

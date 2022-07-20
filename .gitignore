@@ -58,3 +58,5 @@ autom4te.cache
 Makefile
 opensslapis_test
 
+cscope.*
+tags
