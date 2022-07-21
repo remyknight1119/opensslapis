@@ -56,7 +56,7 @@ autom4te.cache
 .deps/
 .libs/
 Makefile
-opensslapis_test
+osslapis_test
 
 cscope.*
 tags

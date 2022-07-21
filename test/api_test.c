@@ -9,38 +9,38 @@
 #include <getopt.h>
 #include <arpa/inet.h>
 
-#include "opensslapis.h"
+#include "osslapis.h"
 
 static OapisApi kOsslApis[] = {
     {
-        .api = test_match_csr_key,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
-        .msg = "Match CSR and Key",
-    },
-    {
         .api = test_load_key,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Load Key from file",
     },
     {
         .api = test_match_pkey,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Match PKey",
     },
     {
         .api = test_match_pkey_type,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Match PKey Type",
     },
     {
         .api = test_match_cert_type,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Match Cert Type",
     },
     {
         .api = test_cert_pubkey_length,
-        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Cert Key Bit Length",
+    },
+    {
+        .api = test_digests,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "Digests test",
     },
 };
 
@@ -139,30 +139,38 @@ int main(int argc, char **argv)
         }
     }
 
-    if (oapis_cert_type <= OAPIS_KEY_TYPE_UNKNOW ||
+    if (oapis_cert_type < OAPIS_KEY_TYPE_UNKNOW ||
             oapis_cert_type >= OAPIS_KEY_TYPE_MAX) {
         fprintf(stderr, "Unknown cert type(%d)\n", oapis_cert_type);
         return -1;
     }
 
-    if (oapis_cert == NULL) {
-        fprintf(stderr, "please input certificate file by -c\n");
-        return -1;
-    }
+    if (oapis_cert_type != OAPIS_KEY_TYPE_UNKNOW) {
+        if (oapis_cert == NULL) {
+            fprintf(stderr, "please input certificate file by -c\n");
+            return -1;
+        }
 
-    if (oapis_key == NULL) {
-        fprintf(stderr, "please input key file by -k\n");
-        return -1;
-    }
+        if (oapis_key == NULL) {
+            fprintf(stderr, "please input key file by -k\n");
+            return -1;
+        }
 
-    if (oapis_ca == NULL) {
-        fprintf(stderr, "please input ca certificate file by -a\n");
-        return -1;
+        if (oapis_ca == NULL) {
+            fprintf(stderr, "please input ca certificate file by -a\n");
+            return -1;
+        }
     }
 
     for (i = 0; i < TEST_APIS_NUM; i++) {
         cs = &kOsslApis[i];
-        if (cs->cert_type != OAPIS_KEY_TYPE_UNKNOW &&
+        if (cs->cert_type != OAPIS_KEY_TYPE_ANY &&
+                cs->cert_type != oapis_cert_type) {
+            fprintf(stdout, "Case %s skip\n", cs->msg);
+            continue;
+        }
+
+        if (oapis_cert_type == OAPIS_KEY_TYPE_UNKNOW &&
                 cs->cert_type != oapis_cert_type) {
             fprintf(stdout, "Case %s skip\n", cs->msg);
             continue;

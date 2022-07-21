@@ -45,9 +45,12 @@ openssl verify -CAfile $ca_chain $ecdsa_cer
 rm -f $ca_chain
 key_bits=`openssl x509 -noout -text -in $rsa_cer | grep Public-Key | cut -d '(' -f 2 | awk '{print $1}'`
 start_info_print "RSA"
-./$dir/opensslapis_test -t 1 -c $rsa_cer -k $rsa_key -s $rsa_csr -a $cacer -d $rsa_der -w $rsa_encrypted -p $passwd -l $key_bits
+./$dir/osslapis_test -t 1 -c $rsa_cer -k $rsa_key -s $rsa_csr -a $cacer -d $rsa_der -w $rsa_encrypted -p $passwd -l $key_bits
 end_info_print
 key_bits=`openssl x509 -noout -text -in $ecdsa_cer | grep Public-Key | cut -d '(' -f 2 | awk '{print $1}'`
 start_info_print "ECDSA"
-./$dir/opensslapis_test -t 2 -c $ecdsa_cer -k $ecdsa_key -s $ecdsa_csr -a $cacer -d $ecdsa_der -w $ecdsa_encrypted -p $passwd  -l $key_bits
+./$dir/osslapis_test -t 2 -c $ecdsa_cer -k $ecdsa_key -s $ecdsa_csr -a $cacer -d $ecdsa_der -w $ecdsa_encrypted -p $passwd  -l $key_bits
+end_info_print
+start_info_print "No Cert"
+./$dir/osslapis_test -t 0 -c $ecdsa_cer -k $ecdsa_key -s $ecdsa_csr -a $cacer -d $ecdsa_der -w $ecdsa_encrypted -p $passwd 
 end_info_print

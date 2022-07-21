@@ -1,5 +1,5 @@
-#ifndef OPENSSLAPIS_TEST_API_TEST_H
-#define OPENSSLAPIS_TEST_API_TEST_H
+#ifndef OSSLAPIS_TEST_API_TEST_H
+#define OSSLAPIS_TEST_API_TEST_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -28,5 +28,6 @@ int test_load_key(void);
 int test_match_pkey_type(void);
 int test_match_cert_type(void);
 int test_cert_pubkey_length(void);
+int test_digests(void);
 
 #endif

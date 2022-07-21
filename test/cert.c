@@ -6,7 +6,7 @@
 
 #include <openssl/evp.h>
 
-#include "opensslapis.h"
+#include "osslapis.h"
 
 int test_match_cert_type(void)
 {

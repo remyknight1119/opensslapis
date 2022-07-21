@@ -1,5 +1,5 @@
-#ifndef OSSLAPIS_INCLUDE_OPENSSLAPIS_H_
-#define OSSLAPIS_INCLUDE_OPENSSLAPIS_H_
+#ifndef OSSLAPIS_INCLUDE_OSSLAPIS_H_
+#define OSSLAPIS_INCLUDE_OSSLAPIS_H_
 
 #include <openssl/types.h>
 
@@ -9,6 +9,7 @@ enum {
     OAPIS_KEY_TYPE_UNKNOW,
     OAPIS_KEY_TYPE_RSA,
     OAPIS_KEY_TYPE_ECDSA,
+    OAPIS_KEY_TYPE_ANY,
     OAPIS_KEY_TYPE_MAX,
 };
 
@@ -21,5 +22,8 @@ int match_pkey(const char *file1, const char *file2, char *passwd);
 uint32_t get_pkey_type(const char *file, char *passwd);
 uint32_t get_cert_type(const char *file, char *passwd);
 int get_cert_pubkey_length(const char *file, char *passwd);
+int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out);
 
 #endif

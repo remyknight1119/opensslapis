@@ -2,7 +2,7 @@
  * Remy Lewis(remyknight1119@gmail.com)
  */
 
-#include "opensslapis.h"
+#include "osslapis.h"
 
 #include <string.h>
 #include <openssl/evp.h>
@@ -154,5 +154,32 @@ uint32_t get_pkey_type(const char *file, char *passwd)
     type = find_pkey_type(pkey);
     EVP_PKEY_free(pkey);
     return type;
+}
+
+int osslapis_digest(const EVP_MD *type, unsigned char *in, int len,
+						unsigned char *out)
+{
+    unsigned int size = 0;
+
+    if (EVP_Digest(in, len, out, &size, type, NULL) == 0) {
+        return -1;
+    }
+
+	return 0;
+}
+
+int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_sha1(), in, len, out);
+}
+
+int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_sha256(), in, len, out);
+}
+
+int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_md5(), in, len, out);
 }
 

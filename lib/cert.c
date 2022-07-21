@@ -3,7 +3,7 @@
  */
 
 #include "cert.h"
-#include "opensslapis.h"
+#include "osslapis.h"
 
 #include <openssl/x509.h>
 #include <openssl/pem.h>
