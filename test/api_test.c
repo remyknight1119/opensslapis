@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <arpa/inet.h>
+#include <openssl/pem.h>
 
 #include "osslapis.h"
 
@@ -52,6 +53,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_RSA,
         .msg = "RSA Verify",
     },
+    {
+        .api = test_load_pub_key,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
+        .msg = "Load Public Key",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)
@@ -70,6 +76,7 @@ static const char *options[] = {
     "--certificate  		-c	certificate file\n",
     "--type  		        -t	type of certificate file(1:RSA, 2:ECDSA)\n",
     "--key      		    -k	key file\n",
+    "--pub      		    -b	public key file\n",
     "--pwd      		    -p	key file password\n",
     "--encrypted-file      	-w	key file encrypted with password\n",
     "--der      		    -d	key file encoded by DER\n",
@@ -91,7 +98,7 @@ static void help(void)
     }
 }
 
-static const char *optstring = "Ht:a:c:k:s:p:d:w:l:";
+static const char *optstring = "Ht:a:c:k:s:p:d:w:l:b:";
 
 int oapis_cert_type;
 int oapis_key_bits;
@@ -100,6 +107,7 @@ char *oapis_key;
 char *oapis_key_pwd;
 char *oapis_key_enc;
 char *oapis_key_der;
+char *oapis_key_pub;
 char *oapis_csr;
 char *oapis_ca;
 
@@ -142,6 +150,9 @@ int main(int argc, char **argv)
                 break;
             case 'w':
                 oapis_key_enc = optarg;
+                break;
+            case 'b':
+                oapis_key_pub = optarg;
                 break;
             default:
                 help();

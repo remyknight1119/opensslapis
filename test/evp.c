@@ -244,3 +244,23 @@ int test_3DES_encrypt_decrypt(void)
     return 0;
 }
 
+int test_load_pub_key(void)
+{
+    EVP_PKEY *pkey = NULL;
+    uint32_t type = 0;
+
+    pkey = load_pub_key(oapis_key_pub, NULL);
+    if (pkey == NULL) {
+        return -1;
+    }
+
+    type = find_pkey_type(pkey);
+    EVP_PKEY_free(pkey);
+    if (type != oapis_cert_type) {
+        printf("type error\n");
+        return -1;
+    }
+
+    return 0;
+}
+

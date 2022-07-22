@@ -22,11 +22,11 @@ X509 *load_cert(const char *file, char *passwd)
         goto out;
     }
 
-    cert = PEM_read_X509_AUX(fp, NULL, pem_key_passwd_cb, passwd);
+   cert = PEM_read_X509_AUX(fp, NULL, pem_key_passwd_cb, passwd);
     if (cert == NULL) {
         /* DER */
         rewind(fp);
-        cert = d2i_X509_fp(fp, NULL);
+       cert = d2i_X509_fp(fp, NULL);
         if (cert == NULL) {
             OSSLAPIS_LOG("DER cert load failed\n");
         }

@@ -19,6 +19,7 @@ extern char *oapis_key;
 extern char *oapis_key_enc;
 extern char *oapis_key_pwd;
 extern char *oapis_key_der;
+extern char *oapis_key_pub;
 extern char *oapis_csr;
 extern char *oapis_ca;
 
@@ -31,5 +32,6 @@ int test_cert_pubkey_length(void);
 int test_digests(void);
 int test_3DES_encrypt_decrypt(void);
 int test_rsa_verify(void);
+int test_load_pub_key(void);
 
 #endif

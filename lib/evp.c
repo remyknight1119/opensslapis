@@ -68,6 +68,22 @@ out:
     return pkey;
 }
 
+EVP_PKEY *load_pub_key(const char *file, char *passwd)
+{
+    EVP_PKEY *pkey = NULL;
+    FILE *fp = NULL;
+
+    fp = fopen(file, "r");
+    if (fp == NULL) {
+        printf("open file failed\n");
+        return NULL;
+    }
+
+    pkey = PEM_read_PUBKEY(fp, NULL, pem_key_passwd_cb, passwd);
+    fclose(fp);
+    return pkey;
+}
+ 
 int match_csr_pkey(const char *csr_file, const char *key_file)
 {
     return 0;

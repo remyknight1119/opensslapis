@@ -7,6 +7,4 @@ typedef struct {
     int (*get_id)(const EVP_PKEY *pkey);
 } KeyType;
 
-uint32_t find_pkey_type(EVP_PKEY *pkey);
-
 #endif
