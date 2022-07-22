@@ -10,6 +10,7 @@
 
 #include "evp.h"
 #include "passwd.h"
+#include "log.h"
 
 static KeyType kPkeyType[] = {
     {
@@ -160,12 +161,40 @@ int osslapis_digest(const EVP_MD *type, unsigned char *in, int len,
 						unsigned char *out)
 {
     unsigned int size = 0;
+    int ret;
+#if 0
+    EVP_MD_CTX *ctx = NULL;
 
-    if (EVP_Digest(in, len, out, &size, type, NULL) == 0) {
+    ctx = EVP_MD_CTX_new();
+    if (ctx == NULL) {
         return -1;
     }
 
-	return 0;
+    ret = EVP_DigestInit_ex(ctx, type, NULL);
+    if (ret == 0) {
+        OSSLAPIS_LOG("Digest Init failed\n");
+        goto out;
+    }
+
+    ret = EVP_DigestUpdate(ctx, in, len);
+    if (ret == 0) {
+        OSSLAPIS_LOG("Digest Update failed\n");
+        goto out;
+    }
+
+    ret = EVP_DigestFinal_ex(ctx, out, &size);
+out:
+    EVP_MD_CTX_free(ctx);
+
+#endif
+
+    ret = EVP_Digest(in, len, out, &size, type, NULL);
+    if (ret == 0) {
+        OSSLAPIS_LOG("Digest error: %s\n", OSSLAPIS_ERR_STR());
+        return -1;
+    }
+
+    return 0;
 }
 
 int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out)
@@ -181,5 +210,66 @@ int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out)
 int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out)
 {
 	return osslapis_digest(EVP_md5(), in, len, out);
+}
+
+static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
+                        unsigned char *iv, unsigned char *out,
+                        const unsigned char *in, int inl, int enc)
+{
+    EVP_CIPHER_CTX *ctx = NULL;
+    int olen = 0;
+    int ret = -1;
+
+    ctx = EVP_CIPHER_CTX_new();
+    if (ctx == NULL) {
+        return -1;
+    }
+
+    if (EVP_CipherInit(ctx, cipher, key, iv, enc) == 0) {
+        goto out;
+    }
+
+    if (EVP_CipherUpdate(ctx, out, &olen, in, inl) == 0) {
+        OSSLAPIS_LOG("EVP Enc Update failed: %s\n", OSSLAPIS_ERR_STR());
+        goto out;
+    }
+
+    if (EVP_CipherFinal(ctx, &out[olen], &olen) <= 0) {
+        OSSLAPIS_LOG("EVP Enc Final failed: %s\n", OSSLAPIS_ERR_STR());
+        goto out;
+    }
+
+    ret = 0;
+out:
+    EVP_CIPHER_CTX_free(ctx);
+    return ret;
+}
+
+int osslapis_cipher_encrypt(const EVP_CIPHER *cipher, unsigned char *key,
+                        unsigned char *iv, unsigned char *out,
+                        const unsigned char *in, int inl)
+{
+    return osslapis_do_cipher(cipher, key, iv, out, in, inl, 1);
+}
+
+int osslapis_cipher_decrypt(const EVP_CIPHER *cipher, unsigned char *key,
+                        unsigned char *iv, unsigned char *out,
+                        const unsigned char *in, int inl)
+{
+    return osslapis_do_cipher(cipher, key, iv, out, in, inl, 0);
+}
+
+int osslapis_3DES_encrypt(unsigned char *key, unsigned char *iv,
+                        unsigned char *out, const unsigned char *in,
+                        int inl)
+{
+    return osslapis_cipher_encrypt(EVP_des_ede3_cbc(), key, iv, out, in, inl);
+}
+
+int osslapis_3DES_decrypt(unsigned char *key, unsigned char *iv,
+                        unsigned char *out, const unsigned char *in,
+                        int inl)
+{
+    return osslapis_cipher_decrypt(EVP_des_ede3_cbc(), key, iv, out, in, inl);
 }
 

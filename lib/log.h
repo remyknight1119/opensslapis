@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <openssl/err.h>
 
 #define OSSLAPIS_LOG(format, ...) \
     do { \
@@ -11,4 +12,7 @@
     } while (0)
 
 
+#define OSSLAPIS_ERR_STR() ERR_reason_error_string(ERR_get_error())
+
 #endif
+

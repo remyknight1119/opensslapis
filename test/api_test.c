@@ -42,6 +42,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "Digests test",
     },
+    {
+        .api = test_3DES_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "3DES Encrypt/Decrypt test",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

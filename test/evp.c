@@ -8,7 +8,10 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
+#include <openssl/md4.h>
 #include <openssl/sha.h>
+#include <openssl/rand.h>
+#include <openssl/des.h>
 
 #include "osslapis.h"
 
@@ -20,21 +23,23 @@ static unsigned char kData[] =
     "\xC9\x7F\xF3\xAD\x59\x50\xAC\xCF\xBC\x11\x1C\x76\xF1\xA9\x52\x94"
     "\x44\xE5\x6A\xAF\x68\xC5\x6C\x09\x2C\xD3\x8D\xC3\xBE\xF5\xD2\x0A"
     "\x93\x99\x26\xED\x4F\x74\xA1\x3E\xDD\xFB\xE1\xA1\xCE\xCC\x48\x94"
-    "\xAF\x94\x28\xC2\xB7\xB8\x88\x3F\xE4\x46\x3A\x4B\xC8\x5B\x1C\xB3"
-    "\xC1";
+    "\xAF\x94\x28\xC2\xB7\xB8\x88\x3F\xE4\x46\x3A\x4B\xC8\x5B\x1C\xB3";
 
 static OapisEvpDigest kTestDigest[] = {
     {
+        .name = "MD5",
         .osslapis_digest = osslapis_digest_md5,
         .origin_digest = MD5,
         .len = MD5_DIGEST_LENGTH,
     },
     {
+        .name = "SHA1",
         .osslapis_digest = osslapis_digest_sha1,
         .origin_digest = SHA1,
         .len = SHA_DIGEST_LENGTH,
     },
     {
+        .name = "SHA256",
         .osslapis_digest = osslapis_digest_sha256,
         .origin_digest = SHA256,
         .len = SHA256_DIGEST_LENGTH,
@@ -127,7 +132,7 @@ void data_print(unsigned char *d, int len)
         fprintf(stdout, "%02X", d[i]);
     }
 
-    fprintf(stdout, "len = %d\n", len);
+    fprintf(stdout, "\nlen = %d\n", len);
 }
 
 int test_digests(void)
@@ -145,11 +150,13 @@ int test_digests(void)
             return -1;
         }
         if (d->osslapis_digest(kData, sizeof(kData) - 1, m) < 0) {
+            printf("Osslapis digest (%s) failed\n", d->name);
             goto out;
         }
 
         r = d->origin_digest(kData, sizeof(kData) - 1, NULL);
         if (r == NULL) {
+            printf("Origin digest (%s) failed\n", d->name);
             goto out;
         }
 
@@ -170,5 +177,71 @@ out:
     }
 
     return ret;
+}
+
+int test_3DES_encrypt_decrypt(void)
+{
+    unsigned char key[24];
+    unsigned char cipher1[sizeof(kData)] = {};
+    unsigned char cipher2[sizeof(kData)] = {};
+    unsigned char plaintext[sizeof(kData)] = {};
+    DES_cblock *des_key = (DES_cblock *)key;
+    DES_key_schedule ksch[3];
+    DES_cblock iv;
+    unsigned char iv_tmp[sizeof(iv)];
+    int len = 0;
+
+    RAND_bytes(key, sizeof(key));
+    RAND_bytes((void *)&iv, sizeof(iv));
+
+    DES_set_key(&des_key[0], &ksch[0]);
+    DES_set_key(&des_key[1], &ksch[1]);
+    DES_set_key(&des_key[2], &ksch[2]);
+
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    len =  sizeof(kData) - 1;
+    if (osslapis_3DES_encrypt(key, (void *)&iv, cipher1, kData, len) < 0) {
+        return -1;
+    }
+
+    DES_ede3_cbc_encrypt(kData, cipher2, len, &ksch[0], &ksch[1], &ksch[2], &iv,
+            DES_ENCRYPT);
+    if (memcmp(cipher1, cipher2, len) != 0) {
+        data_print(cipher1, len);
+        data_print(cipher2, len);
+        return -1;
+    }
+
+    DES_set_key(&des_key[0], &ksch[0]);
+    DES_set_key(&des_key[1], &ksch[1]);
+    DES_set_key(&des_key[2], &ksch[2]);
+
+    memcpy(&iv, iv_tmp, sizeof(iv));
+    DES_ede3_cbc_encrypt(cipher2, plaintext, len, &ksch[0], &ksch[1], &ksch[2], &iv,
+            DES_DECRYPT);
+
+    if (memcmp(plaintext, kData, len) != 0) {
+        data_print(kData, len);
+        data_print(plaintext, len);
+        return -1;
+    }
+
+    memset(plaintext, 0, sizeof(plaintext));
+#if 0
+    data_print((void *)iv_tmp, sizeof(iv));
+    if (osslapis_3DES_decrypt(key, iv_tmp, plaintext, cipher1, len) < 0) {
+        data_print(kData, len);
+        data_print(plaintext, len);
+        return -1;
+    }
+
+    if (memcmp(plaintext, kData, len) != 0) {
+        data_print(kData, len);
+        data_print(plaintext, len);
+        return -1;
+    }
+#endif
+
+    return 0;
 }
 

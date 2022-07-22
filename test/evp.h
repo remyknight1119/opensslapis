@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 typedef struct {
+    const char *name;
     int (*osslapis_digest)(unsigned char *in, int len, unsigned char *out);
     unsigned char *(*origin_digest)(const unsigned char *d, size_t n,
             unsigned char *md);
