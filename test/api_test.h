@@ -30,5 +30,6 @@ int test_match_cert_type(void);
 int test_cert_pubkey_length(void);
 int test_digests(void);
 int test_3DES_encrypt_decrypt(void);
+int test_rsa_verify(void);
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef OSSLAPIS_INCLUDE_OSSLAPIS_H_
 #define OSSLAPIS_INCLUDE_OSSLAPIS_H_
 
+#include <stddef.h>
 #include <openssl/types.h>
 
 #define OAPIS_NELEM(array)    (sizeof(array)/sizeof(array[0]))
@@ -31,5 +32,12 @@ int osslapis_3DES_encrypt(unsigned char *key, unsigned char *iv,
 int osslapis_3DES_decrypt(unsigned char *key, unsigned char *iv,
                         unsigned char *out, const unsigned char *in,
                         int inl);
+int ossapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
+                    size_t *siglen, const unsigned char *in, size_t inlen,
+                    int pad);
+int ossapis_rsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
+                    const unsigned char *sig, size_t siglen,
+                    const unsigned char *in, size_t inlen,
+                    int pad);
 
 #endif

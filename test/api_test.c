@@ -40,12 +40,17 @@ static OapisApi kOsslApis[] = {
     {
         .api = test_digests,
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
-        .msg = "Digests test",
+        .msg = "Digests",
     },
     {
         .api = test_3DES_encrypt_decrypt,
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
-        .msg = "3DES Encrypt/Decrypt test",
+        .msg = "3DES Encrypt/Decrypt",
+    },
+    {
+        .api = test_rsa_verify,
+        .cert_type = OAPIS_KEY_TYPE_RSA,
+        .msg = "RSA Verify",
     },
 };
 
@@ -171,13 +176,13 @@ int main(int argc, char **argv)
         cs = &kOsslApis[i];
         if (cs->cert_type != OAPIS_KEY_TYPE_ANY &&
                 cs->cert_type != oapis_cert_type) {
-            fprintf(stdout, "Case %s skip\n", cs->msg);
+//            fprintf(stdout, "Case %s skip\n", cs->msg);
             continue;
         }
 
         if (oapis_cert_type == OAPIS_KEY_TYPE_UNKNOW &&
                 cs->cert_type != oapis_cert_type) {
-            fprintf(stdout, "Case %s skip\n", cs->msg);
+//            fprintf(stdout, "Case %s skip\n", cs->msg);
             continue;
         }
 
