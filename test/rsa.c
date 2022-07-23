@@ -35,13 +35,13 @@ int test_rsa_verify(void)
     
     RAND_bytes(digest, sizeof(digest));
 
-    if (ossapis_rsa_sign(pkey, md, rsa_buf, &siglen, digest,
+    if (osslapis_rsa_sign(pkey, md, rsa_buf, &siglen, digest,
                 sizeof(digest), pad) < 0) {
         printf("RSA sign failed\n");
         goto out;
     }
 
-    if (ossapis_rsa_verify(pub, md, rsa_buf, siglen, digest,
+    if (osslapis_rsa_verify(pub, md, rsa_buf, siglen, digest,
                 sizeof(digest), pad) < 0) {
         printf("RSA verify failed\n");
         goto out;
@@ -58,6 +58,5 @@ out:
     EVP_PKEY_free(pkey);
     EVP_PKEY_free(pub);
     return ret;
-
 }
 

@@ -11,7 +11,7 @@
 #include "passwd.h"
 #include "log.h"
 
-int ossapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
+int osslapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
                     size_t *siglen, const unsigned char *in, size_t inlen,
                     int pad)
 {
@@ -51,7 +51,7 @@ out:
     return ret;
 }
 
-int ossapis_rsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
+int osslapis_rsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
                     const unsigned char *sig, size_t siglen,
                     const unsigned char *in, size_t inlen,
                     int pad)

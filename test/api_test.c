@@ -54,9 +54,19 @@ static OapisApi kOsslApis[] = {
         .msg = "RSA Verify",
     },
     {
-        .api = test_load_pub_key,
+        .api = test_load_pub_key_from_file,
         .cert_type = OAPIS_KEY_TYPE_ANY,
-        .msg = "Load Public Key",
+        .msg = "Load Public Key from file",
+    },
+    {
+        .api = test_load_pub_key_from_mem,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
+        .msg = "Load Public Key from memory",
+    },
+    {
+        .api = test_aes_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "AES Encrypt/Decrypt",
     },
 };
 

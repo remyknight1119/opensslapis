@@ -244,12 +244,10 @@ int test_3DES_encrypt_decrypt(void)
     return 0;
 }
 
-int test_load_pub_key(void)
+static int check_pub_key(EVP_PKEY *pkey)
 {
-    EVP_PKEY *pkey = NULL;
     uint32_t type = 0;
 
-    pkey = load_pub_key(oapis_key_pub, NULL);
     if (pkey == NULL) {
         return -1;
     }
@@ -262,5 +260,46 @@ int test_load_pub_key(void)
     }
 
     return 0;
+}
+
+int test_load_pub_key_from_file(void)
+{
+    EVP_PKEY *pkey = NULL;
+
+    pkey = load_pub_key(oapis_key_pub, NULL);
+    return check_pub_key(pkey);
+}
+
+int test_load_pub_key_from_mem(void)
+{
+    EVP_PKEY *pkey = NULL;
+    char *key = NULL;
+    FILE *fp = NULL;
+    long len = 0;
+
+    fp = fopen(oapis_key_pub, "r");
+    if (fp == NULL) {
+        return -1;
+    }
+
+    fseek(fp, 0L, SEEK_END);
+    len = ftell(fp);
+    if (len <= 0) {
+        fclose(fp);
+        return -1;
+    }
+
+    key = calloc(1, len + 1);
+    if (key == NULL) {
+        fclose(fp);
+        return -1;
+    }
+
+    fseek(fp, 0L, SEEK_SET);
+    fread(key, len, 1, fp);
+    fclose(fp);
+    pkey = load_pub_key_from_mem(key, NULL);
+    free(key);
+    return check_pub_key(pkey);
 }
 

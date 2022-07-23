@@ -7,6 +7,7 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#include <openssl/bio.h>
 
 #include "evp.h"
 #include "passwd.h"
@@ -84,6 +85,23 @@ EVP_PKEY *load_pub_key(const char *file, char *passwd)
     return pkey;
 }
  
+EVP_PKEY *load_pub_key_from_mem(const char *key, char *passwd)
+{
+    EVP_PKEY *pub = NULL;
+    BIO *b = NULL;
+
+    b = BIO_new(BIO_s_mem());
+    if (b == NULL) {
+        return NULL;
+    }
+
+    BIO_write(b, key, strlen(key));
+    pub = PEM_read_bio_PUBKEY_ex(b, NULL, pem_key_passwd_cb, passwd, 
+                                    NULL, NULL);
+    BIO_free(b);
+    return pub;
+}
+
 int match_csr_pkey(const char *csr_file, const char *key_file)
 {
     return 0;

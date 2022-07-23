@@ -17,6 +17,7 @@ enum {
 EVP_PKEY *load_private_key(const char *file, char *passwd);
 EVP_PKEY *load_cert_pub_key(const char *file, char *passwd);
 EVP_PKEY *load_pub_key(const char *file, char *passwd);
+EVP_PKEY *load_pub_key_from_mem(const char *key, char *passwd);
 uint32_t find_pkey_type(EVP_PKEY *pkey);
 int match_csr_key(const char *csr_file, const char *key_file);
 int match_cert_pkey_pair(const char *key, const char *cert,
@@ -34,10 +35,10 @@ int osslapis_3DES_encrypt(unsigned char *key, unsigned char *iv,
 int osslapis_3DES_decrypt(unsigned char *key, unsigned char *iv,
                         unsigned char *out, const unsigned char *in,
                         int inl);
-int ossapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
+int osslapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
                     size_t *siglen, const unsigned char *in, size_t inlen,
                     int pad);
-int ossapis_rsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
+int osslapis_rsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
                     const unsigned char *sig, size_t siglen,
                     const unsigned char *in, size_t inlen,
                     int pad);
