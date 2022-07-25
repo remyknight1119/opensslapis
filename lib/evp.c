@@ -12,6 +12,7 @@
 #include "evp.h"
 #include "passwd.h"
 #include "log.h"
+#include "debug.h"
 
 static KeyType kPkeyType[] = {
     {
@@ -247,12 +248,27 @@ int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out)
 }
 
 static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
-                        unsigned char *iv, unsigned char *out,
-                        const unsigned char *in, int inl, int enc)
+                        int keylen, unsigned char *iv, int ivlen,
+                        unsigned char *out, int *outl, const unsigned char *in,
+                        int inl, int enc)
 {
     EVP_CIPHER_CTX *ctx = NULL;
-    int olen = 0;
+    int len = 0;
+    int key_len = 0;
+    int iv_len = 0;
     int ret = -1;
+ 
+    key_len = EVP_CIPHER_key_length(cipher);
+    if (keylen != key_len) {
+        OSSLAPIS_LOG("Key len(%d) error(%d)\n", keylen, key_len);
+        return -1;
+    }
+
+    iv_len = EVP_CIPHER_iv_length(cipher);
+    if (ivlen != iv_len) {
+        OSSLAPIS_LOG("IV len(%d) error(%d)\n", ivlen, iv_len);
+        return -1;
+    }
 
     ctx = EVP_CIPHER_CTX_new();
     if (ctx == NULL) {
@@ -263,16 +279,17 @@ static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
         goto out;
     }
 
-    if (EVP_CipherUpdate(ctx, out, &olen, in, inl) == 0) {
-        OSSLAPIS_LOG("EVP Enc Update failed: %s\n", OSSLAPIS_ERR_STR());
+    if (EVP_CipherUpdate(ctx, out, outl, in, inl) == 0) {
+        OSSLAPIS_LOG("EVP Cipher Update failed: %s\n", OSSLAPIS_ERR_STR());
         goto out;
     }
 
-    if (EVP_CipherFinal(ctx, &out[olen], &olen) <= 0) {
-        OSSLAPIS_LOG("EVP Enc Final failed: %s\n", OSSLAPIS_ERR_STR());
+    if (EVP_CipherFinal(ctx, &out[*outl], &len) <= 0) {
+        OSSLAPIS_LOG("EVP Cipher Final failed: %s\n", OSSLAPIS_ERR_STR());
         goto out;
     }
 
+    *outl += len;
     ret = 0;
 out:
     EVP_CIPHER_CTX_free(ctx);
@@ -280,30 +297,52 @@ out:
 }
 
 int osslapis_cipher_encrypt(const EVP_CIPHER *cipher, unsigned char *key,
-                        unsigned char *iv, unsigned char *out,
-                        const unsigned char *in, int inl)
+                        int keylen, unsigned char *iv, int ivlen,
+                        unsigned char *out, int *outl, const unsigned char *in,
+                        int inl)
 {
-    return osslapis_do_cipher(cipher, key, iv, out, in, inl, 1);
+    return osslapis_do_cipher(cipher, key, keylen, iv, ivlen, out, outl,
+                                in, inl, 1);
 }
 
 int osslapis_cipher_decrypt(const EVP_CIPHER *cipher, unsigned char *key,
-                        unsigned char *iv, unsigned char *out,
+                        int keylen, unsigned char *iv, int ivlen,
+                        unsigned char *out, int *outl, const unsigned char *in,
+                        int inl)
+{
+    return osslapis_do_cipher(cipher, key, keylen, iv, ivlen, out, outl,
+                                in, inl, 0);
+}
+
+int osslapis_3DES_encrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl)
 {
-    return osslapis_do_cipher(cipher, key, iv, out, in, inl, 0);
+    return osslapis_cipher_encrypt(EVP_des_ede3_cbc(), key, keylen, iv, ivlen,
+                    out, outl, in, inl);
 }
 
-int osslapis_3DES_encrypt(unsigned char *key, unsigned char *iv,
-                        unsigned char *out, const unsigned char *in,
-                        int inl)
+int osslapis_3DES_decrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl)
 {
-    return osslapis_cipher_encrypt(EVP_des_ede3_cbc(), key, iv, out, in, inl);
+    return osslapis_cipher_decrypt(EVP_des_ede3_cbc(), key, keylen, iv, ivlen,
+                    out, outl, in, inl);
 }
 
-int osslapis_3DES_decrypt(unsigned char *key, unsigned char *iv,
-                        unsigned char *out, const unsigned char *in,
-                        int inl)
+int osslapis_aes_encrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl)
 {
-    return osslapis_cipher_decrypt(EVP_des_ede3_cbc(), key, iv, out, in, inl);
+    return osslapis_cipher_encrypt(EVP_aes_128_cbc(), key, keylen, iv, ivlen,
+                    out, outl, in, inl);
+}
+
+int osslapis_aes_decrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl)
+{
+    return osslapis_cipher_decrypt(EVP_aes_128_cbc(), key, keylen, iv, ivlen,
+                    out, outl, in, inl);
 }
 

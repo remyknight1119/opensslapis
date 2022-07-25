@@ -11,8 +11,10 @@
 #include <openssl/sha.h>
 #include <openssl/rand.h>
 #include <openssl/des.h>
+#include <openssl/aes.h>
 
 #include "osslapis.h"
+#include "debug.h"
 
 static unsigned char kData[] =
     "\x00\xA5\xDA\xFC\x53\x41\xFA\xF2\x89\xC4\xB9\x88\xDB\x30\xC1\xCD"
@@ -123,17 +125,6 @@ int test_match_pkey_type(void)
     return 0;
 }
 
-void data_print(unsigned char *d, int len)
-{
-    int i = 0;
-
-    for (i = 0; i < len; i++) {
-        fprintf(stdout, "%02X", d[i]);
-    }
-
-    fprintf(stdout, "\nlen = %d\n", len);
-}
-
 int test_digests(void)
 {
     OapisEvpDigest *d = NULL;
@@ -189,6 +180,8 @@ int test_3DES_encrypt_decrypt(void)
     DES_cblock iv;
     unsigned char iv_tmp[sizeof(iv)];
     int len = 0;
+    int cipher_len = 0;
+    int plaintext_len = 0;
 
     RAND_bytes(key, sizeof(key));
     RAND_bytes((void *)&iv, sizeof(iv));
@@ -199,7 +192,8 @@ int test_3DES_encrypt_decrypt(void)
 
     memcpy(iv_tmp, &iv, sizeof(iv));
     len =  sizeof(kData) - 1;
-    if (osslapis_3DES_encrypt(key, (void *)&iv, cipher1, kData, len) < 0) {
+    if (osslapis_3DES_encrypt(key, sizeof(key), (void *)&iv, sizeof(iv),
+                cipher1, &cipher_len, kData, len) < 0) {
         return -1;
     }
 
@@ -226,20 +220,65 @@ int test_3DES_encrypt_decrypt(void)
     }
 
     memset(plaintext, 0, sizeof(plaintext));
-#if 0
-    data_print((void *)iv_tmp, sizeof(iv));
-    if (osslapis_3DES_decrypt(key, iv_tmp, plaintext, cipher1, len) < 0) {
+    if (osslapis_3DES_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                plaintext, &plaintext_len, cipher1, cipher_len) < 0) {
         data_print(kData, len);
         data_print(plaintext, len);
         return -1;
     }
 
-    if (memcmp(plaintext, kData, len) != 0) {
+    if (plaintext_len != len || memcmp(plaintext, kData, len) != 0) {
         data_print(kData, len);
         data_print(plaintext, len);
         return -1;
     }
-#endif
+
+    return 0;
+}
+
+int test_aes_encrypt_decrypt(void)
+{
+    unsigned char key[16];
+    unsigned char cipher1[sizeof(kData)] = {};
+    unsigned char cipher2[sizeof(kData)] = {};
+    unsigned char plaintext[sizeof(kData)] = {};
+    AES_KEY aes_key;
+    unsigned char iv[16];
+    unsigned char iv_tmp[sizeof(iv)];
+    int len = 0;
+    int cipher_len = 0;
+    int plaintext_len = 0;
+
+    RAND_bytes(key, sizeof(key));
+    RAND_bytes((void *)&iv, sizeof(iv));
+
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    len =  sizeof(kData) - 1;
+    if (osslapis_aes_encrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                cipher1, &cipher_len, kData, len) < 0) {
+        return -1;
+    }
+
+    AES_set_encrypt_key(key, sizeof(key)*8, &aes_key);
+    memcpy(iv_tmp, &iv, sizeof(iv));
+
+    AES_cbc_encrypt(kData, cipher2, len, &aes_key, iv_tmp, AES_ENCRYPT);
+    if (memcmp(cipher1, cipher2, len) != 0) {
+        data_print(cipher1, len);
+        data_print(cipher2, len);
+        return -1;
+    }
+
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    if (osslapis_aes_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                plaintext, &plaintext_len, cipher1, cipher_len) < 0) {
+        printf("AES decrypt failed\n");
+        return -1;
+    }
+
+    if (plaintext_len != len || memcmp(plaintext, kData, len) != 0) {
+        return -1;
+    }
 
     return 0;
 }
