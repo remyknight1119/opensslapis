@@ -259,13 +259,13 @@ static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
     int ret = -1;
  
     key_len = EVP_CIPHER_key_length(cipher);
-    if (keylen != key_len) {
+    if (keylen < key_len) {
         OSSLAPIS_LOG("Key len(%d) error(%d)\n", keylen, key_len);
         return -1;
     }
 
     iv_len = EVP_CIPHER_iv_length(cipher);
-    if (ivlen != iv_len) {
+    if (ivlen < iv_len) {
         OSSLAPIS_LOG("IV len(%d) error(%d)\n", ivlen, iv_len);
         return -1;
     }

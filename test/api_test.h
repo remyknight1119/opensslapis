@@ -35,5 +35,6 @@ int test_rsa_verify(void);
 int test_load_pub_key_from_file(void);
 int test_load_pub_key_from_mem(void);
 int test_aes_encrypt_decrypt(void);
+int test_rsa_encrypt_decrypt(void);
 
 #endif

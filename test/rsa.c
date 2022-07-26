@@ -10,6 +10,7 @@
 #include <openssl/rand.h>
 
 #include "osslapis.h"
+#include "debug.h"
 
 static unsigned char rsa_buf[2048];
 
@@ -52,6 +53,68 @@ int test_rsa_verify(void)
         printf("RSA_verify failed\n");
         goto out;
     }
+
+    ret = 0;
+out:
+    EVP_PKEY_free(pkey);
+    EVP_PKEY_free(pub);
+    return ret;
+}
+
+int test_rsa_encrypt_decrypt(void)
+{
+    EVP_PKEY *pkey = NULL;
+    EVP_PKEY *pub = NULL;
+    RSA *rsa = NULL;
+    unsigned char *cipher = NULL;
+    unsigned char *plaintext = NULL;
+    unsigned char digest[32];
+    size_t len = sizeof(digest);
+    size_t cipher_len = 0;
+    size_t p_len = 0;
+    int pad = RSA_PKCS1_PADDING;
+    int ret = -1;
+
+    pkey = load_private_key(oapis_key, NULL);
+    if (pkey == NULL) {
+        return -1;
+    }
+
+    pub = load_cert_pub_key(oapis_cert, NULL);
+    if (pub == NULL) {
+        goto out;
+    }
+    
+    RAND_bytes(digest, sizeof(digest));
+
+    cipher = rsa_buf;
+    if (osslapis_rsa_encrypt(pub, cipher, &cipher_len, digest, len, pad) < 0) {
+        printf("RSA encrypt failed\n");
+        goto out;
+    }
+
+    plaintext = &rsa_buf[cipher_len];
+    if (osslapis_rsa_decrypt(pkey, plaintext, &p_len, cipher,
+                cipher_len, pad) < 0) {
+        printf("RSA decrypt failed\n");
+        goto out;
+    }
+
+    if (p_len != len || memcmp(digest, plaintext, len) != 0) {
+        data_print(digest, len);
+        data_print(plaintext, p_len);
+        goto out;
+    }
+
+    memset(plaintext, 0, len);
+    rsa = (void *)EVP_PKEY_get0_RSA(pkey);
+    p_len = RSA_private_decrypt(RSA_size(rsa), cipher, plaintext, rsa, pad);
+    if (p_len != len || memcmp(digest, plaintext, len) != 0) {
+        data_print(digest, len);
+        data_print(plaintext, p_len);
+        goto out;
+    }
+
 
     ret = 0;
 out:
