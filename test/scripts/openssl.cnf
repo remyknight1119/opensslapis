@@ -241,12 +241,12 @@ authorityKeyIdentifier=keyid,issuer
 
 basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-#subjectAltName = @alt_names
+subjectAltName = @alt_names
 
-#[alt_names]
-#DNS.3=another_website0.dev
-#DNS.1=another-*.dev
-#DNS.2=1AAA
+[alt_names]
+DNS.1=another_website0.dev
+#DNS.2=another-*.dev
+#DNS.3=1AAA
 #IP.1    = 192.1.1.8
 #IP.2    = fe80::8a03:2482:edcd:373b
 

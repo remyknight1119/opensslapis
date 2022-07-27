@@ -73,6 +73,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_RSA,
         .msg = "RSA Encrypt/Decrypt",
     },
+    {
+        .api = test_hmac,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "HMAC",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

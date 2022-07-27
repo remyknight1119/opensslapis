@@ -24,7 +24,7 @@ srl=t_ssl_ca.srl
 #Server cert
 openssl genrsa -out $key $key_bits
 openssl req -new -key $key -sha256 -out $csr -subj $subj
-openssl x509 -req -in $csr -sha256 -out $cer -CA $cacer -CAkey $cakey -CAserial $srl -CAcreateserial -days $expire_days -extensions v3_req
+openssl x509 -req -in $csr -extfile $config -sha256 -out $cer -CA $cacer -CAkey $cakey -CAserial $srl -CAcreateserial -days $expire_days -extensions v3_req
 #openssl ca -config $config -keyfile $key -out $cer -infiles $csr
 #openssl pkcs12 -export -clcerts -in $cer -inkey $key -out $p12
 #openssl pkcs12 -export -in $cer -inkey $key -out $pfx 

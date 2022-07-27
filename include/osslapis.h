@@ -29,6 +29,9 @@ int get_cert_pubkey_length(const char *file, char *passwd);
 int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out);
+int osslapis_hmac(const EVP_MD *type, const unsigned char *key, int keylen,
+                        unsigned char *in, int len, unsigned char *sign,
+                        size_t *sign_len);
 int osslapis_3DES_encrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl);
