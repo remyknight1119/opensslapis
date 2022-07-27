@@ -120,7 +120,6 @@ int osslapis_rsa_encrypt(EVP_PKEY *pkey, unsigned char *out, size_t *outlen,
 out:
     EVP_PKEY_CTX_free(ctx);
     return ret;
-
 }
 
 int osslapis_rsa_decrypt(EVP_PKEY *pkey, unsigned char *out, size_t *outlen,
@@ -155,6 +154,5 @@ int osslapis_rsa_decrypt(EVP_PKEY *pkey, unsigned char *out, size_t *outlen,
 out:
     EVP_PKEY_CTX_free(ctx);
     return ret;
-
 }
 

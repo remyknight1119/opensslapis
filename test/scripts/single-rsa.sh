@@ -6,7 +6,7 @@ dir=`dirname $0`
 set -e
 key_bits=4096
 expire_days=3650
-subj=/C="CA"/ST="California"/L="Sunnyvale"/O="OPENSSLAPIS"/OU="OSSLAPIS"/CN="osslapis.rsasingle.com"
+subj=/C="CA"/ST="California"/L="Sunnyvale"/O="OPENSSLAPIS"/OU="OSSLAPIS"/CN="www.rsasingle.com"
 ca_name=ca-root
 root_cacer=$ca_name.cer
 root_cakey=$ca_name.key

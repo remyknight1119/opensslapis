@@ -258,6 +258,10 @@ static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
     int iv_len = 0;
     int ret = -1;
  
+    if (cipher == NULL) {
+        return -1;
+    }
+
     key_len = EVP_CIPHER_key_length(cipher);
     if (keylen < key_len) {
         OSSLAPIS_LOG("Key len(%d) error(%d)\n", keylen, key_len);
@@ -327,22 +331,6 @@ int osslapis_3DES_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                         const unsigned char *in, int inl)
 {
     return osslapis_cipher_decrypt(EVP_des_ede3_cbc(), key, keylen, iv, ivlen,
-                    out, outl, in, inl);
-}
-
-int osslapis_aes_encrypt(unsigned char *key, int keylen, unsigned char *iv,
-                        int ivlen, unsigned char *out, int *outl,
-                        const unsigned char *in, int inl)
-{
-    return osslapis_cipher_encrypt(EVP_aes_128_cbc(), key, keylen, iv, ivlen,
-                    out, outl, in, inl);
-}
-
-int osslapis_aes_decrypt(unsigned char *key, int keylen, unsigned char *iv,
-                        int ivlen, unsigned char *out, int *outl,
-                        const unsigned char *in, int inl)
-{
-    return osslapis_cipher_decrypt(EVP_aes_128_cbc(), key, keylen, iv, ivlen,
                     out, outl, in, inl);
 }
 

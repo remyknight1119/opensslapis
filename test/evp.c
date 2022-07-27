@@ -254,7 +254,7 @@ int test_aes_encrypt_decrypt(void)
 
     memcpy(iv_tmp, &iv, sizeof(iv));
     len =  sizeof(kData) - 1;
-    if (osslapis_aes_encrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+    if (osslapis_aes_cbc_encrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
                 cipher1, &cipher_len, kData, len) < 0) {
         return -1;
     }
@@ -270,7 +270,7 @@ int test_aes_encrypt_decrypt(void)
     }
 
     memcpy(iv_tmp, &iv, sizeof(iv));
-    if (osslapis_aes_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+    if (osslapis_aes_cbc_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
                 plaintext, &plaintext_len, cipher1, cipher_len) < 0) {
         printf("AES decrypt failed\n");
         return -1;

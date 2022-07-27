@@ -34,6 +34,7 @@ int test_rsa_verify(void)
         goto out;
     }
     
+    printf("s = %d\n", EVP_PKEY_get_size(pub));
     RAND_bytes(digest, sizeof(digest));
 
     if (osslapis_rsa_sign(pkey, md, rsa_buf, &siglen, digest,
@@ -88,7 +89,7 @@ int test_rsa_encrypt_decrypt(void)
     RAND_bytes(digest, sizeof(digest));
 
     cipher = rsa_buf;
-    if (osslapis_rsa_encrypt(pub, cipher, &cipher_len, digest, len, pad) < 0) {
+    if (osslapis_rsa_encrypt(pkey, cipher, &cipher_len, digest, len, pad) < 0) {
         printf("RSA encrypt failed\n");
         goto out;
     }
