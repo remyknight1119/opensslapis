@@ -64,9 +64,9 @@ static OapisApi kOsslApis[] = {
         .msg = "Load Public Key from memory",
     },
     {
-        .api = test_aes_encrypt_decrypt,
+        .api = test_aes_cbc_encrypt_decrypt,
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
-        .msg = "AES Encrypt/Decrypt",
+        .msg = "AES CBC Encrypt/Decrypt",
     },
     {
         .api = test_rsa_encrypt_decrypt,
@@ -77,6 +77,11 @@ static OapisApi kOsslApis[] = {
         .api = test_hmac,
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "HMAC",
+    },
+    {
+        .api = test_aes_ctr_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "AES CTR Encrypt/Decrypt",
     },
 };
 

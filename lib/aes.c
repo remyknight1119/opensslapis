@@ -32,6 +32,23 @@ static AesType kAesCbcType[] = {
 
 #define AES_CBC_TYPE_NUM OAPIS_NELEM(kAesCbcType)
 
+static AesType kAesCtrType[] = {
+    {
+        .key_size = 128,
+        .get_cipher = EVP_aes_128_ctr,
+    },
+    {
+        .key_size = 192,
+        .get_cipher = EVP_aes_192_ctr,
+    },
+    {
+        .key_size = 256,
+        .get_cipher = EVP_aes_256_ctr,
+    },
+};
+
+#define AES_CTR_TYPE_NUM OAPIS_NELEM(kAesCtrType)
+
 static AesType *find_aes_type(int key_size, AesType *t, size_t num)
 {
     int i = 0;
@@ -57,6 +74,18 @@ static const EVP_CIPHER *get_aes_cbc_evp(int key_size)
     return t->get_cipher();
 }
 
+static const EVP_CIPHER *get_aes_ctr_evp(int key_size)
+{
+    AesType *t = NULL;
+
+    t = find_aes_type(key_size*8, kAesCtrType, AES_CTR_TYPE_NUM);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    return t->get_cipher();
+}
+
 int osslapis_aes_cbc_encrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl)
@@ -72,6 +101,26 @@ int osslapis_aes_cbc_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                         const unsigned char *in, int inl)
 {
     const EVP_CIPHER *evp = get_aes_cbc_evp(keylen);
+
+    return osslapis_cipher_decrypt(evp, key, keylen, iv, ivlen, out, outl,
+                                    in, inl);
+}
+
+int osslapis_aes_ctr_encrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl)
+{
+    const EVP_CIPHER *evp = get_aes_ctr_evp(keylen);
+
+    return osslapis_cipher_encrypt(evp, key, keylen, iv, ivlen, out, outl,
+                                    in, inl);
+}
+
+int osslapis_aes_ctr_decrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl)
+{
+    const EVP_CIPHER *evp = get_aes_ctr_evp(keylen);
 
     return osslapis_cipher_decrypt(evp, key, keylen, iv, ivlen, out, outl,
                                     in, inl);

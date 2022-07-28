@@ -236,7 +236,7 @@ int test_3DES_encrypt_decrypt(void)
     return 0;
 }
 
-int test_aes_encrypt_decrypt(void)
+int test_aes_cbc_encrypt_decrypt(void)
 {
     unsigned char key[16];
     unsigned char cipher1[sizeof(kData)] = {};
@@ -273,6 +273,59 @@ int test_aes_encrypt_decrypt(void)
     if (osslapis_aes_cbc_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
                 plaintext, &plaintext_len, cipher1, cipher_len) < 0) {
         printf("AES decrypt failed\n");
+        return -1;
+    }
+
+    if (plaintext_len != len || memcmp(plaintext, kData, len) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int test_aes_ctr_encrypt_decrypt(void)
+{
+    unsigned char key[16];
+    unsigned char cipher[sizeof(kData)] = {};
+    unsigned char plaintext[sizeof(kData)] = {};
+    unsigned char iv[16];
+    unsigned char iv_tmp[sizeof(iv)];
+    int len = 0;
+    int cipher_len = 0;
+    int plaintext_len = 0;
+
+    RAND_bytes(key, sizeof(key));
+    RAND_bytes((void *)&iv, sizeof(iv));
+
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    len =  sizeof(kData) - 1;
+    if (osslapis_aes_ctr_encrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                cipher, &cipher_len, kData, len) < 0) {
+        return -1;
+    }
+
+    if (cipher_len != len) {
+        printf("AES CTR cipher len error\n");
+        return -1;
+    }
+
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    if (osslapis_aes_ctr_decrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                plaintext, &plaintext_len, cipher, cipher_len) < 0) {
+        printf("AES CTR decrypt failed\n");
+        return -1;
+    }
+
+    if (plaintext_len != len || memcmp(plaintext, kData, len) != 0) {
+        return -1;
+    }
+
+    plaintext_len = 0;
+    memset(plaintext, 0, sizeof(plaintext));
+    memcpy(iv_tmp, &iv, sizeof(iv));
+    if (osslapis_aes_ctr_encrypt(key, sizeof(key), iv_tmp, sizeof(iv_tmp),
+                plaintext, &plaintext_len, cipher, cipher_len) < 0) {
+        printf("AES CTR encrypt failed\n");
         return -1;
     }
 

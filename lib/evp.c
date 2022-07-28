@@ -280,6 +280,7 @@ static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
     }
 
     if (EVP_CipherInit(ctx, cipher, key, iv, enc) == 0) {
+        OSSLAPIS_LOG("EVP Cipher Init failed: %s\n", OSSLAPIS_ERR_STR());
         goto out;
     }
 
