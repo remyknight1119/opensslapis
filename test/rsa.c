@@ -34,7 +34,7 @@ int test_rsa_verify(void)
         goto out;
     }
     
-    printf("s = %d\n", EVP_PKEY_get_size(pub));
+    //printf("s = %d\n", EVP_PKEY_get_size(pub));
     RAND_bytes(digest, sizeof(digest));
 
     if (osslapis_rsa_sign(pkey, md, rsa_buf, &siglen, digest,

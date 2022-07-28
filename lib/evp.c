@@ -319,19 +319,3 @@ int osslapis_cipher_decrypt(const EVP_CIPHER *cipher, unsigned char *key,
                                 in, inl, 0);
 }
 
-int osslapis_3DES_encrypt(unsigned char *key, int keylen, unsigned char *iv,
-                        int ivlen, unsigned char *out, int *outl,
-                        const unsigned char *in, int inl)
-{
-    return osslapis_cipher_encrypt(EVP_des_ede3_cbc(), key, keylen, iv, ivlen,
-                    out, outl, in, inl);
-}
-
-int osslapis_3DES_decrypt(unsigned char *key, int keylen, unsigned char *iv,
-                        int ivlen, unsigned char *out, int *outl,
-                        const unsigned char *in, int inl)
-{
-    return osslapis_cipher_decrypt(EVP_des_ede3_cbc(), key, keylen, iv, ivlen,
-                    out, outl, in, inl);
-}
-

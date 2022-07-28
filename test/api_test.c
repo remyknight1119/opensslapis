@@ -44,7 +44,7 @@ static OapisApi kOsslApis[] = {
         .msg = "Digests",
     },
     {
-        .api = test_3DES_encrypt_decrypt,
+        .api = test_3des_encrypt_decrypt,
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "3DES Encrypt/Decrypt",
     },
