@@ -71,6 +71,8 @@ int get_cert_pubkey_length(const char *file, char *passwd)
     EVP_PKEY *pub = NULL;
     const EC_KEY *ec_key = NULL;
     const EC_GROUP *group = NULL;
+    const DSA *dsa = NULL;
+    const BIGNUM *p = NULL;
     uint32_t type = OAPIS_KEY_TYPE_UNKNOW;
     int len = 0;
 
@@ -96,6 +98,15 @@ int get_cert_pubkey_length(const char *file, char *passwd)
             len = EC_GROUP_order_bits(group);
             break;
         case OAPIS_KEY_TYPE_DSA:
+            dsa = EVP_PKEY_get0_DSA(pub);
+            if (dsa == NULL) {
+                goto out;
+            }
+            p = DSA_get0_p(dsa);
+            if (p == NULL) {
+                goto out;
+            }
+            len = BN_num_bits(p);
             break;
         default:
             break;

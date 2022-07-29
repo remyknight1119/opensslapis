@@ -59,6 +59,7 @@ key_bits=`openssl x509 -noout -text -in $ecdsa_cer | grep Public-Key | cut -d '(
 start_info_print "ECDSA"
 ./$dir/osslapis_test -t 2 -c $ecdsa_cer -k $ecdsa_key -s $ecdsa_csr -a $cacer -d $ecdsa_der -w $ecdsa_encrypted -p $passwd  -l $key_bits -b $ecdsa_pub_key
 end_info_print
+key_bits=`openssl dsa -in $dsa_key -text -noout| grep "Private-Key:" | awk '{print $2}' | cut -d '(' -f 2`
 start_info_print "DSA"
 ./$dir/osslapis_test -t 3 -c $dsa_cer -k $dsa_key -s $dsa_csr -a $cacer -d $dsa_der -w $dsa_encrypted -p $passwd  -l $key_bits -b $dsa_pub_key
 end_info_print

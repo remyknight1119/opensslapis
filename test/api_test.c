@@ -83,6 +83,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "AES CTR Encrypt/Decrypt",
     },
+    {
+        .api = test_dsa_verify,
+        .cert_type = OAPIS_KEY_TYPE_DSA,
+        .msg = "DSA Verify",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

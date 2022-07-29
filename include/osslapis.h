@@ -62,4 +62,10 @@ int osslapis_rsa_encrypt(EVP_PKEY *pkey, unsigned char *out, size_t *outlen,
                     const unsigned char *in, size_t inlen, int pad);
 int osslapis_rsa_decrypt(EVP_PKEY *pkey, unsigned char *out, size_t *outlen,
                     const unsigned char *in, size_t inlen, int pad);
+int osslapis_dsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
+                    size_t *siglen, const unsigned char *in, size_t inlen);
+int osslapis_dsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
+                    const unsigned char *sig, size_t siglen,
+                    const unsigned char *in, size_t inlen);
+
 #endif
