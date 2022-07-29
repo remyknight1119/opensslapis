@@ -11,8 +11,8 @@
 #include "passwd.h"
 #include "log.h"
 
-int osslapis_dsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
-                    size_t *siglen, const unsigned char *in, size_t inlen)
+int osslapis_dsa_sign(EVP_PKEY *pkey, unsigned char *sig, size_t *siglen,
+                    const unsigned char *in, size_t inlen)
 {
     EVP_PKEY_CTX *ctx = NULL;
     int ret = -1;
@@ -22,10 +22,6 @@ int osslapis_dsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
     }
 
     if (EVP_PKEY_sign_init(ctx) <= 0) {
-        goto out;
-    }
-
-    if (EVP_PKEY_CTX_set_signature_md(ctx, md) <= 0) {
         goto out;
     }
 
@@ -45,8 +41,7 @@ out:
     return ret;
 }
 
-int osslapis_dsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
-                    const unsigned char *sig, size_t siglen,
+int osslapis_dsa_verify(EVP_PKEY *pkey, const unsigned char *sig, size_t siglen,
                     const unsigned char *in, size_t inlen)
 {
     EVP_PKEY_CTX *ctx = NULL;
@@ -57,10 +52,6 @@ int osslapis_dsa_verify(EVP_PKEY *pkey, const EVP_MD *md,
     }
 
     if (EVP_PKEY_verify_init(ctx) <= 0) {
-        goto out;
-    }
-
-    if (EVP_PKEY_CTX_set_signature_md(ctx, md) <= 0) {
         goto out;
     }
 

@@ -18,7 +18,6 @@ int test_dsa_verify(void)
 {
     EVP_PKEY *pkey = NULL;
     EVP_PKEY *pub = NULL;
-    const EVP_MD *md = EVP_sha256();
     unsigned char digest[32];
     size_t siglen = 0;
     int ret = -1;
@@ -35,14 +34,12 @@ int test_dsa_verify(void)
     
     RAND_bytes(digest, sizeof(digest));
 
-    if (osslapis_dsa_sign(pkey, md, dsa_buf, &siglen, digest,
-                sizeof(digest)) < 0) {
+    if (osslapis_dsa_sign(pkey, dsa_buf, &siglen, digest, sizeof(digest)) < 0) {
         printf("DSA sign failed\n");
         goto out;
     }
 
-    if (osslapis_dsa_verify(pub, md, dsa_buf, siglen, digest,
-                sizeof(digest)) < 0) {
+    if (osslapis_dsa_verify(pub, dsa_buf, siglen, digest, sizeof(digest)) < 0) {
         printf("DSA verify failed\n");
         goto out;
     }
