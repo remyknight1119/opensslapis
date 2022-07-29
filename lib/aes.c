@@ -2,7 +2,6 @@
  * Remy Lewis(remyknight1119@gmail.com)
  */
 
-#include "aes.h"
 #include "osslapis.h"
 
 #include <string.h>
@@ -15,7 +14,7 @@
 #include "log.h"
 #include "debug.h"
 
-static AesType kAesCbcType[] = {
+static EvpPkeyCipher kAesCbcType[] = {
     {
         .key_size = 128,
         .get_cipher = EVP_aes_128_cbc,
@@ -32,7 +31,7 @@ static AesType kAesCbcType[] = {
 
 #define AES_CBC_TYPE_NUM OAPIS_NELEM(kAesCbcType)
 
-static AesType kAesCtrType[] = {
+static EvpPkeyCipher kAesCtrType[] = {
     {
         .key_size = 128,
         .get_cipher = EVP_aes_128_ctr,
@@ -49,24 +48,11 @@ static AesType kAesCtrType[] = {
 
 #define AES_CTR_TYPE_NUM OAPIS_NELEM(kAesCtrType)
 
-static AesType *find_aes_type(int key_size, AesType *t, size_t num)
-{
-    int i = 0;
-
-    for (i = 0; i < num; i++) {
-        if (t[i].key_size == key_size) {
-            return &t[i];
-        }
-    }
-
-    return NULL;
-}
-
 static const EVP_CIPHER *get_aes_cbc_evp(int key_size)
 {
-    AesType *t = NULL;
+    EvpPkeyCipher *t = NULL;
 
-    t = find_aes_type(key_size*8, kAesCbcType, AES_CBC_TYPE_NUM);
+    t = find_evp_pkey_type(key_size*8, kAesCbcType, AES_CBC_TYPE_NUM);
     if (t == NULL) {
         return NULL;
     }
@@ -76,9 +62,9 @@ static const EVP_CIPHER *get_aes_cbc_evp(int key_size)
 
 static const EVP_CIPHER *get_aes_ctr_evp(int key_size)
 {
-    AesType *t = NULL;
+    EvpPkeyCipher *t = NULL;
 
-    t = find_aes_type(key_size*8, kAesCtrType, AES_CTR_TYPE_NUM);
+    t = find_evp_pkey_type(key_size*8, kAesCtrType, AES_CTR_TYPE_NUM);
     if (t == NULL) {
         return NULL;
     }

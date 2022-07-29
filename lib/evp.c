@@ -380,4 +380,17 @@ out:
     return ret;
 }
 
+EvpPkeyCipher *find_evp_pkey_type(int key_size, EvpPkeyCipher *t, size_t num)
+{
+    int i = 0;
+
+    for (i = 0; i < num; i++) {
+        if (t[i].key_size == key_size) {
+            return &t[i];
+        }
+    }
+
+    return NULL;
+}
+
 

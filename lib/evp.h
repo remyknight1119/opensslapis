@@ -7,6 +7,13 @@ typedef struct {
     int (*get_id)(const EVP_PKEY *pkey);
 } KeyType;
 
+typedef struct {
+    int key_size;
+    const EVP_CIPHER *(*get_cipher)(void);
+} EvpPkeyCipher;
+
+
+EvpPkeyCipher *find_evp_pkey_type(int key_size, EvpPkeyCipher *t, size_t num);
 int osslapis_cipher_encrypt(const EVP_CIPHER *cipher, unsigned char *key,
                         int keylen, unsigned char *iv, int ivlen,
                         unsigned char *out, int *outl, const unsigned char *in,

@@ -93,6 +93,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_ECDSA,
         .msg = "ECDSA Verify",
     },
+    {
+        .api = test_camellia_cbc_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "CAMELLIA CBC Encrypt/Decrypt",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

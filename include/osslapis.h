@@ -70,5 +70,13 @@ int osslapis_ecdsa_sign(EVP_PKEY *pkey, unsigned char *sig, size_t *siglen,
                     const unsigned char *in, size_t inlen);
 int osslapis_ecdsa_verify(EVP_PKEY *pkey, const unsigned char *sig,
                 size_t siglen, const unsigned char *in, size_t inlen);
+int osslapis_camellia_cbc_encrypt(unsigned char *k, int klen,
+                        unsigned char *iv, int ivlen,
+                        unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
+int osslapis_camellia_cbc_decrypt(unsigned char *k, int klen,
+                        unsigned char *iv, int ivlen,
+                        unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
 
 #endif
