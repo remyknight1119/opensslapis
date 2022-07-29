@@ -39,5 +39,6 @@ int test_aes_ctr_encrypt_decrypt(void);
 int test_rsa_encrypt_decrypt(void);
 int test_hmac(void);
 int test_dsa_verify(void);
+int test_ecdsa_verify(void);
 
 #endif

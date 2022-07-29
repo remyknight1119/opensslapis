@@ -88,6 +88,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_DSA,
         .msg = "DSA Verify",
     },
+    {
+        .api = test_ecdsa_verify,
+        .cert_type = OAPIS_KEY_TYPE_ECDSA,
+        .msg = "ECDSA Verify",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

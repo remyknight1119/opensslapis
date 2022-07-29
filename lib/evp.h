@@ -15,5 +15,9 @@ int osslapis_cipher_decrypt(const EVP_CIPHER *cipher, unsigned char *key,
                         int keylen, unsigned char *iv, int ivlen,
                         unsigned char *out, int *outl, const unsigned char *in,
                         int inl);
+int osslapis_pkey_sign(EVP_PKEY *pkey, unsigned char *sig, size_t *siglen,
+                    const unsigned char *in, size_t inlen);
+int osslapis_pkey_verify(EVP_PKEY *pkey, const unsigned char *sig,
+                    size_t siglen, const unsigned char *in, size_t inlen);
 
 #endif
