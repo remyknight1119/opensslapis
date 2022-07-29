@@ -30,6 +30,11 @@ static KeyType kPkeyType[] = {
         .type = OAPIS_KEY_TYPE_ECDSA,
         .get_id = EVP_PKEY_get_base_id,
     },
+    {
+        .id = EVP_PKEY_DSA,
+        .type = OAPIS_KEY_TYPE_DSA,
+        .get_id = EVP_PKEY_get_base_id,
+    },
 };
 
 #define EVP_PKEY_TYPE_NUM OAPIS_NELEM(kPkeyType)

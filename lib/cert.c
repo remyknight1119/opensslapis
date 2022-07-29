@@ -95,6 +95,8 @@ int get_cert_pubkey_length(const char *file, char *passwd)
             }
             len = EC_GROUP_order_bits(group);
             break;
+        case OAPIS_KEY_TYPE_DSA:
+            break;
         default:
             break;
     }
