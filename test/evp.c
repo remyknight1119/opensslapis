@@ -40,10 +40,28 @@ static OapisEvpDigest kTestDigest[] = {
         .len = SHA_DIGEST_LENGTH,
     },
     {
+        .name = "SHA224",
+        .osslapis_digest = osslapis_digest_sha224,
+        .origin_digest = SHA224,
+        .len = SHA224_DIGEST_LENGTH,
+    },
+    {
         .name = "SHA256",
         .osslapis_digest = osslapis_digest_sha256,
         .origin_digest = SHA256,
         .len = SHA256_DIGEST_LENGTH,
+    },
+    {
+        .name = "SHA384",
+        .osslapis_digest = osslapis_digest_sha384,
+        .origin_digest = SHA384,
+        .len = SHA384_DIGEST_LENGTH,
+    },
+    {
+        .name = "SHA512",
+        .osslapis_digest = osslapis_digest_sha512,
+        .origin_digest = SHA512,
+        .len = SHA512_DIGEST_LENGTH,
     },
 };
 
@@ -156,6 +174,10 @@ int test_digests(void)
             goto out;
         }
 
+        if (i == 0) {
+            printf(" ");
+        }
+        printf("%s ", d->name);
         free(m);
         m = NULL;
     }

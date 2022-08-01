@@ -242,9 +242,24 @@ int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out)
 	return osslapis_digest(EVP_sha1(), in, len, out);
 }
 
+int osslapis_digest_sha224(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_sha224(), in, len, out);
+}
+
 int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out)
 {
 	return osslapis_digest(EVP_sha256(), in, len, out);
+}
+
+int osslapis_digest_sha384(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_sha384(), in, len, out);
+}
+
+int osslapis_digest_sha512(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_sha512(), in, len, out);
 }
 
 int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out)

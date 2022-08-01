@@ -28,7 +28,10 @@ uint32_t get_pkey_type(const char *file, char *passwd);
 uint32_t get_cert_type(const char *file, char *passwd);
 int get_cert_pubkey_length(const char *file, char *passwd);
 int osslapis_digest_sha1(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_sha224(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_sha384(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_sha512(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out);
 int osslapis_hmac(const EVP_MD *type, const unsigned char *key, int keylen,
                         unsigned char *in, int len, unsigned char *sign,
