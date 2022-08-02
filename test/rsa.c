@@ -13,6 +13,7 @@
 #include "debug.h"
 
 static unsigned char rsa_buf[2048];
+static int rsa_key_len[] = {2048, 3072, 4096};
 
 int test_rsa_verify(void)
 {
@@ -122,5 +123,48 @@ out:
     EVP_PKEY_free(pkey);
     EVP_PKEY_free(pub);
     return ret;
+}
+
+int test_rsa_key_gen(void)
+{
+    EVP_PKEY *pkey = NULL;
+    unsigned char *buf = NULL;
+    int klen = 0;
+    int i = 0;
+    int ret = 0;
+    int len = 0;
+
+    for (i = 0; i < sizeof(rsa_key_len)/sizeof(rsa_key_len[0]); i++) {
+        klen = rsa_key_len[i];
+        pkey = osslapis_rsa_key_gen(klen);
+        if (pkey == NULL) {
+            printf("Gen RSA Key %d bits failed\n", klen);
+            return -1;
+        }
+        
+        ret = RSA_check_key(EVP_PKEY_get0_RSA(pkey));
+        if (ret == 0) {
+            printf("RSA Key %d bits check failed\n", klen);
+            EVP_PKEY_free(pkey);
+            return -1;
+        }
+        
+        len = i2d_PrivateKey(pkey, &buf);
+        EVP_PKEY_free(pkey);
+        if (len <= 0 || buf == NULL) {
+            printf("i2d Private Key for RSA Key %d bits failed\n", klen);
+            return -1;
+        }
+
+        pkey = d2i_PrivateKey(EVP_PKEY_RSA, NULL, (void *)&buf, len);
+        EVP_PKEY_free(pkey);
+        if (pkey == NULL) {
+            printf("d2i Private Key for RSA Key %d bits failed\n", klen);
+            return -1;
+        }
+        buf = NULL;
+    }
+
+    return 0;
 }
 

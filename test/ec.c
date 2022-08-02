@@ -12,6 +12,7 @@
 #include "osslapis.h"
 #include "evp.h"
 #include "debug.h"
+#include "log.h"
 
 static unsigned char ecdsa_buf[2048];
 static int ec_nid[] = {NID_X9_62_prime256v1, NID_secp384r1, NID_secp521r1};
@@ -64,22 +65,41 @@ out:
 int test_ec_key_gen(void)
 {
     EVP_PKEY *pkey = NULL;
+    unsigned char *buf = NULL;
+    int nid = 0;
     int i = 0;
     int ret = 0;
+    int len = 0;
 
     for (i = 0; i < sizeof(ec_nid)/sizeof(ec_nid[0]); i++) {
-        pkey = osslapis_gen_ec_key_by_nid(ec_nid[i]);
+        nid = ec_nid[i];
+        pkey = osslapis_ec_key_gen_by_nid(nid);
         if (pkey == NULL) {
-            printf("Gen EC Key for %d failed\n", ec_nid[i]);
+            printf("Gen EC Key for %d failed\n", nid);
             return -1;
         }
         
         ret = EC_KEY_check_key(EVP_PKEY_get0_EC_KEY(pkey));
-        EVP_PKEY_free(pkey);
         if (ret == 0) {
-            printf("EC Key check for %d failed\n", ec_nid[i]);
+            printf("EC Key check for %d failed\n", nid);
+            EVP_PKEY_free(pkey);
             return -1;
         }
+        
+        len = i2d_PrivateKey(pkey, &buf);
+        EVP_PKEY_free(pkey);
+        if (len <= 0 || buf == NULL) {
+            printf("i2d Private Key for EC Key %d failed\n", nid);
+            return -1;
+        }
+
+        pkey = d2i_PrivateKey(EVP_PKEY_EC, NULL, (void *)&buf, len);
+        EVP_PKEY_free(pkey);
+        if (pkey == NULL) {
+            printf("d2i Private Key for EC Key %d failed\n", nid);
+            return -1;
+        }
+        buf = NULL;
     }
 
     return 0;

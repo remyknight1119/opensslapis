@@ -24,12 +24,12 @@ int osslapis_ecdsa_verify(EVP_PKEY *pkey, const unsigned char *sig,
     return osslapis_pkey_verify(pkey, sig, siglen, in, inlen);
 }
 
-EVP_PKEY *osslapis_gen_ec_key(const char *curve)
+EVP_PKEY *osslapis_ec_key_gen(const char *curve)
 {
     return EVP_EC_gen(curve);
 }
 
-EVP_PKEY *osslapis_gen_ec_key_by_nid(int nid)
+EVP_PKEY *osslapis_ec_key_gen_by_nid(int nid)
 {
     const char *name = NULL;
 
@@ -39,6 +39,6 @@ EVP_PKEY *osslapis_gen_ec_key_by_nid(int nid)
         return NULL;
     }
 
-    return osslapis_gen_ec_key(name);
+    return osslapis_ec_key_gen(name);
 }
 

@@ -11,6 +11,11 @@
 #include "passwd.h"
 #include "log.h"
 
+EVP_PKEY *osslapis_rsa_key_gen(int bits)
+{
+     return EVP_RSA_gen(bits);
+}
+
 int osslapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
                     size_t *siglen, const unsigned char *in, size_t inlen,
                     int pad)
