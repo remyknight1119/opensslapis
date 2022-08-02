@@ -19,6 +19,8 @@ EVP_PKEY *load_private_key(const char *file, char *passwd);
 EVP_PKEY *load_cert_pub_key(const char *file, char *passwd);
 EVP_PKEY *load_pub_key(const char *file, char *passwd);
 EVP_PKEY *load_pub_key_from_mem(const char *key, char *passwd);
+EVP_PKEY *osslapis_gen_ec_key(const char *curve);
+EVP_PKEY *osslapis_gen_ec_key_by_nid(int nid);
 uint32_t find_pkey_type(EVP_PKEY *pkey);
 int match_csr_key(const char *csr_file, const char *key_file);
 int match_cert_pkey_pair(const char *key, const char *cert,

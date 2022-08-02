@@ -42,5 +42,6 @@ int test_hmac(void);
 int test_dsa_verify(void);
 int test_ecdsa_verify(void);
 int test_camellia_cbc_encrypt_decrypt(void);
+int test_ec_key_gen(void);
 
 #endif

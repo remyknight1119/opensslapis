@@ -103,6 +103,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "CAMELLIA CBC Encrypt/Decrypt",
     },
+    {
+        .api = test_ec_key_gen,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "EC Key Generate",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)
