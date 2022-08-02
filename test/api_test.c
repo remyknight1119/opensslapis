@@ -84,6 +84,11 @@ static OapisApi kOsslApis[] = {
         .msg = "AES CTR Encrypt/Decrypt",
     },
     {
+        .api = test_aes_cfb_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "AES CFB Encrypt/Decrypt",
+    },
+    {
         .api = test_dsa_verify,
         .cert_type = OAPIS_KEY_TYPE_DSA,
         .msg = "DSA Verify",
