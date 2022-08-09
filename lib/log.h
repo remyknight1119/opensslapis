@@ -12,7 +12,8 @@
     } while (0)
 
 
-#define OSSLAPIS_ERR_STR() ERR_reason_error_string(ERR_get_error())
+#define OSSLAPIS_ERR_STR() osslapis_ossl_log_error()
 
 #endif
 
+const char *osslapis_ossl_log_error(void);

@@ -22,6 +22,8 @@ extern char *oapis_key_der;
 extern char *oapis_key_pub;
 extern char *oapis_csr;
 extern char *oapis_ca;
+extern char *oapis_pkcs;
+extern char *oapis_pkcs_pwd;
 
 int test_match_csr_key(void);
 int test_match_pkey(void);
@@ -44,5 +46,6 @@ int test_ecdsa_verify(void);
 int test_camellia_cbc_encrypt_decrypt(void);
 int test_ec_key_gen(void);
 int test_rsa_key_gen(void);
+int test_load_pkcs12_cert(void);
 
 #endif

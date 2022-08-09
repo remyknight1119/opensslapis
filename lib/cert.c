@@ -7,6 +7,7 @@
 
 #include <openssl/x509.h>
 #include <openssl/pem.h>
+#include <openssl/pkcs12.h>
 
 #include "log.h"
 #include "passwd.h"
@@ -53,6 +54,44 @@ EVP_PKEY *load_cert_pub_key(const char *file, char *passwd)
     pkey = X509_get_pubkey(cert);
     X509_free(cert);
     return pkey;
+}
+
+X509 *load_pkcs12_cert(const char *file, char *passwd)
+{
+    FILE *fp = NULL;
+    PKCS12 *p12 = NULL;
+    EVP_PKEY *pkey = NULL;
+    X509 *cert = NULL;
+    STACK_OF(X509) *ca = NULL;
+
+    fp = fopen(file, "r");
+    if (fp == NULL) {
+        goto out;
+    }
+
+    p12 = d2i_PKCS12_fp(fp, NULL);
+    if (p12 == NULL) {
+        OSSLAPIS_LOG("d2i_PKCS12_fp failed: %s\n", OSSLAPIS_ERR_STR());
+        goto out;
+    }
+    
+    if (!PKCS12_parse(p12, passwd, &pkey, &cert, &ca)) {
+        OSSLAPIS_LOG("PKCS12_parse failed: %s\n", OSSLAPIS_ERR_STR());
+        goto out;
+    }
+
+    EVP_PKEY_free(pkey);
+    sk_X509_pop_free(ca, X509_free);
+out:
+    if (p12 != NULL) {
+        PKCS12_free(p12);
+    }
+
+    if (fp != NULL) {
+        fclose(fp);
+    }
+
+    return cert;
 }
 
 uint32_t get_cert_type(const char *file, char *passwd)

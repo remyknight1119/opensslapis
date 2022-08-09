@@ -113,6 +113,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "RSA Key Generate",
     },
+    {
+        .api = test_load_pkcs12_cert,
+        .cert_type = OAPIS_KEY_TYPE_ANY,
+        .msg = "Load PKCS12 Cert",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)
@@ -153,7 +158,7 @@ static void help(void)
     }
 }
 
-static const char *optstring = "Ht:a:c:k:s:p:d:w:l:b:";
+static const char *optstring = "Ht:a:c:k:s:p:d:w:l:b:m:n:";
 
 int oapis_cert_type;
 int oapis_key_bits;
@@ -165,6 +170,8 @@ char *oapis_key_der;
 char *oapis_key_pub;
 char *oapis_csr;
 char *oapis_ca;
+char *oapis_pkcs;
+char *oapis_pkcs_pwd;
 
 int main(int argc, char **argv)
 {
@@ -208,6 +215,12 @@ int main(int argc, char **argv)
                 break;
             case 'b':
                 oapis_key_pub = optarg;
+                break;
+            case 'm':
+                oapis_pkcs = optarg;
+                break;
+            case 'n':
+                oapis_pkcs_pwd = optarg;
                 break;
             default:
                 help();

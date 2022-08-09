@@ -5,6 +5,7 @@
 #include "api_test.h"
 
 #include <openssl/evp.h>
+#include <openssl/x509.h>
 
 #include "osslapis.h"
 
@@ -27,5 +28,18 @@ int test_cert_pubkey_length(void)
         return -1;
     }
 
+    return 0;
+}
+
+int test_load_pkcs12_cert(void)
+{
+    X509 *x = NULL;
+
+    x = load_pkcs12_cert(oapis_pkcs, oapis_pkcs_pwd);
+    if (x == NULL) {
+        return -1;
+    }
+
+    X509_free(x);
     return 0;
 }
