@@ -8,6 +8,7 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/bio.h>
+#include <openssl/obj_mac.h>
 
 #include "evp.h"
 #include "passwd.h"
@@ -17,14 +18,17 @@
 static EvpPkeyCipher kAesCbcType[] = {
     {
         .key_size = 128,
+        .name = SN_aes_128_cbc,
         .get_cipher = EVP_aes_128_cbc,
     },
     {
         .key_size = 192,
+        .name = SN_aes_192_cbc,
         .get_cipher = EVP_aes_192_cbc,
     },
     {
         .key_size = 256,
+        .name = SN_aes_256_cbc,
         .get_cipher = EVP_aes_256_cbc,
     },
 };
@@ -34,14 +38,17 @@ static EvpPkeyCipher kAesCbcType[] = {
 static EvpPkeyCipher kAesCtrType[] = {
     {
         .key_size = 128,
+        .name = SN_aes_128_ctr,
         .get_cipher = EVP_aes_128_ctr,
     },
     {
         .key_size = 192,
+        .name = SN_aes_192_ctr,
         .get_cipher = EVP_aes_192_ctr,
     },
     {
         .key_size = 256,
+        .name = SN_aes_256_ctr,
         .get_cipher = EVP_aes_256_ctr,
     },
 };
@@ -72,6 +79,10 @@ static const EVP_CIPHER *get_aes_cbc_evp(int key_size)
     t = find_evp_pkey_type(key_size*8, kAesCbcType, AES_CBC_TYPE_NUM);
     if (t == NULL) {
         return NULL;
+    }
+
+    if (t->name != NULL) {
+        return EVP_CIPHER_fetch(NULL, t->name, NULL);
     }
 
     return t->get_cipher();

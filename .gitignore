@@ -55,6 +55,7 @@ autom4te.cache
 *.in
 .deps/
 .libs/
+*.log
 Makefile
 osslapis_test
 

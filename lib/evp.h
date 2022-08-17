@@ -9,6 +9,7 @@ typedef struct {
 
 typedef struct {
     int key_size;
+    const char *name;
     const EVP_CIPHER *(*get_cipher)(void);
 } EvpPkeyCipher;
 
