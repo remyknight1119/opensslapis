@@ -172,6 +172,7 @@ char *oapis_csr;
 char *oapis_ca;
 char *oapis_pkcs;
 char *oapis_pkcs_pwd;
+char *oapis_legacy_lib = "/usr/local/lib/legacy.so";
 
 int main(int argc, char **argv)
 {
@@ -226,6 +227,11 @@ int main(int argc, char **argv)
                 help();
                 return -1;
         }
+    }
+
+    if (osslapis_providers_load(oapis_legacy_lib) < 0) {
+        printf("Providers load failed\n");
+        return -1;
     }
 
     if (oapis_cert_type < OAPIS_KEY_TYPE_UNKNOW ||
