@@ -25,7 +25,6 @@ int osslapis_providers_load(const char *legacy_lib)
         return -1;
     }
 
-    EVP_CIPHER *ciph;
     defprov = OSSL_PROVIDER_load(NULL, "default");
     if (defprov == NULL) {
         printf("Load default provider failed\n");
@@ -55,11 +54,7 @@ int osslapis_providers_load(const char *legacy_lib)
         goto out;
     }
 
-    ciph = EVP_CIPHER_fetch(NULL, "DES-CBC", NULL);
-    printf("cipher = %p, lp = %p\n", ciph, lgcyprov);
-
     ret = 0;
-
 out:
     if (dlhan != NULL) {
         dlclose(dlhan);
