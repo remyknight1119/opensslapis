@@ -118,6 +118,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_ANY,
         .msg = "Load PKCS12 Cert",
     },
+    {
+        .api = test_rc4_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "RC4 Encrypt/Decrypt",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

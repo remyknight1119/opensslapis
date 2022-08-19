@@ -46,6 +46,7 @@ int test_ecdsa_verify(void);
 int test_camellia_cbc_encrypt_decrypt(void);
 int test_ec_key_gen(void);
 int test_rsa_key_gen(void);
+int test_rc4_encrypt_decrypt(void);
 int test_load_pkcs12_cert(void);
 
 #endif

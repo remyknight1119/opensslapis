@@ -91,6 +91,12 @@ int osslapis_camellia_cbc_decrypt(unsigned char *k, int klen,
                         unsigned char *iv, int ivlen,
                         unsigned char *out, int *outl,
                         const unsigned char *in, int inl);
+int osslapis_rc4_encrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
+int osslapis_rc4_decrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
 int osslapis_providers_load(const char *legacy_lib);
 
 #endif
