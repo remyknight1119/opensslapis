@@ -24,15 +24,11 @@ pkcs_passwd=123456
 curves=secp256r1
 curves=prime256v1
 curves=secp521r1
-ossl_cmd=~/openssl-openssl-3.0.3/apps/openssl
 
 openssl ecparam -name $curves -genkey -out $key
 openssl req -new -key $key -sha256 -out $csr -subj $subj -days $expire_days
 openssl x509 -req -in $csr -sha256 -extfile $config -out $cer -CA $cacer -CAkey $cakey -CAserial t_ssl_ca.srl -CAcreateserial -days $expire_days -extensions v3_req
-if [ ! -x $ossl_cmd ]; then
-    ossl_cmd=openssl
-fi
-$ossl_cmd pkcs12 -export -clcerts -passout pass:$pkcs_passwd -in $cer -inkey $key -out $p12
+openssl pkcs12 -export -clcerts -passout pass:$pkcs_passwd -in $cer -inkey $key -out $p12
 rm -f *.srl
 
 #cat $sub1_cacer $cacer $cer $key |tee $param.pem
