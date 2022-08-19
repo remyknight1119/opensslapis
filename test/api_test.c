@@ -153,6 +153,7 @@ static const char *options[] = {
     "--csr      		    -s	csr file\n",
     "--ca      		        -a	ca certificate file\n",
     "--len      		    -l	length of key bits\n",
+    "--legacy-lib      		-g	path of legcay.so\n",
     "--help         		-H	Print help information\n",
 };
 
@@ -168,7 +169,7 @@ static void help(void)
     }
 }
 
-static const char *optstring = "Ht:a:c:k:s:p:d:w:l:b:m:n:";
+static const char *optstring = "Ht:a:c:k:s:p:d:w:l:b:m:n:g:";
 
 int oapis_cert_type;
 int oapis_key_bits;
@@ -182,7 +183,7 @@ char *oapis_csr;
 char *oapis_ca;
 char *oapis_pkcs;
 char *oapis_pkcs_pwd;
-char *oapis_legacy_lib = "/usr/local/lib/legacy.so";
+char *oapis_legacy_lib;
 
 int main(int argc, char **argv)
 {
@@ -232,6 +233,9 @@ int main(int argc, char **argv)
                 break;
             case 'n':
                 oapis_pkcs_pwd = optarg;
+                break;
+            case 'g':
+                oapis_legacy_lib = optarg;
                 break;
             default:
                 help();
