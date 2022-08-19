@@ -8,6 +8,7 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
+#include <openssl/md4.h>
 #include <openssl/sha.h>
 #include <openssl/rand.h>
 #include <openssl/des.h>
@@ -32,6 +33,12 @@ static OapisEvpDigest kTestDigest[] = {
         .osslapis_digest = osslapis_digest_md5,
         .origin_digest = MD5,
         .len = MD5_DIGEST_LENGTH,
+    },
+    {
+        .name = "MD4",
+        .osslapis_digest = osslapis_digest_md4,
+        .origin_digest = MD4,
+        .len = MD4_DIGEST_LENGTH,
     },
     {
         .name = "SHA1",

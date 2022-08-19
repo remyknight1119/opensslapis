@@ -267,6 +267,11 @@ int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out)
 	return osslapis_digest(EVP_md5(), in, len, out);
 }
 
+int osslapis_digest_md4(unsigned char *in, int len, unsigned char *out)
+{
+	return osslapis_digest(EVP_md4(), in, len, out);
+}
+
 static int osslapis_do_cipher(const EVP_CIPHER *cipher, unsigned char *key,
                         int keylen, unsigned char *iv, int ivlen,
                         unsigned char *out, int *outl, const unsigned char *in,

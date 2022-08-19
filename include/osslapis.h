@@ -37,6 +37,7 @@ int osslapis_digest_sha256(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_sha384(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_sha512(unsigned char *in, int len, unsigned char *out);
 int osslapis_digest_md5(unsigned char *in, int len, unsigned char *out);
+int osslapis_digest_md4(unsigned char *in, int len, unsigned char *out);
 int osslapis_hmac(const EVP_MD *type, const unsigned char *key, int keylen,
                         unsigned char *in, int len, unsigned char *sign,
                         size_t *sign_len);
