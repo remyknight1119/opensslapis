@@ -49,6 +49,11 @@ static OapisApi kOsslApis[] = {
         .msg = "3DES Encrypt/Decrypt",
     },
     {
+        .api = test_des_cbc_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "DES CBC Encrypt/Decrypt",
+    },
+    {
         .api = test_rsa_verify,
         .cert_type = OAPIS_KEY_TYPE_RSA,
         .msg = "RSA Verify",

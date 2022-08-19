@@ -46,6 +46,12 @@ int osslapis_3des_encrypt(unsigned char *key, int keylen, unsigned char *iv,
 int osslapis_3des_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl);
+int osslapis_des_cbc_encrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
+int osslapis_des_cbc_decrypt(unsigned char *key, int keylen, unsigned char *iv,
+                        int ivlen, unsigned char *out, int *outl,
+                        const unsigned char *in, int inl);
 int osslapis_aes_cbc_encrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl);

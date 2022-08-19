@@ -33,6 +33,7 @@ int test_match_cert_type(void);
 int test_cert_pubkey_length(void);
 int test_digests(void);
 int test_3des_encrypt_decrypt(void);
+int test_des_cbc_encrypt_decrypt(void);
 int test_rsa_verify(void);
 int test_load_pub_key_from_file(void);
 int test_load_pub_key_from_mem(void);
