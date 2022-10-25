@@ -4,7 +4,7 @@ dir=test
 #cd $dir
 
 set -e
-legacy_lib="/usr/local/lib/legacy.so"
+legacy_lib="/usr/lib/x86_64-linux-gnu/ossl-modules/legacy.so"
 cacer=$dir/cert/ca-root.cer
 rsa_cer=$dir/cert/rsa.pem
 rsa_key=$dir/cert/rsa.pem

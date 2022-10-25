@@ -250,7 +250,7 @@ int test_load_pub_key_from_mem(void)
     }
 
     fseek(fp, 0L, SEEK_SET);
-    fread(key, len, 1, fp);
+    len = fread(key, len, 1, fp);
     fclose(fp);
     pkey = load_pub_key_from_mem(key, NULL);
     free(key);

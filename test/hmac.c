@@ -23,9 +23,11 @@ int test_hmac(void)
     unsigned char data[256] = {};
     static unsigned char sign1[TEST_HMAC_SIGN_BUF_LEN] = {};
     static unsigned char sign2[TEST_HMAC_SIGN_BUF_LEN] = {};
+    static unsigned char sign3[TEST_HMAC_SIGN_BUF_LEN] = {};
     size_t klen = sizeof(key);
     size_t dlen = sizeof(data);
     size_t md_len = sizeof(sign1);
+    unsigned int mlen = 0;
 
     RAND_bytes(key, sizeof(key));
     RAND_bytes(data, sizeof(data));
@@ -47,6 +49,16 @@ int test_hmac(void)
     if (memcmp(sign1, sign2, md_len) != 0) {
         data_print(sign1, md_len);
         data_print(sign2, md_len);
+        return -1;
+    }
+
+    if (HMAC(md, key, klen, data, dlen, sign3, &mlen) == 0) {
+        return -1;
+    }
+
+    if (md_len != mlen || memcmp(sign1, sign3, md_len) != 0) {
+        data_print(sign1, md_len);
+        data_print(sign3, md_len);
         return -1;
     }
 
