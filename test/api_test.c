@@ -128,6 +128,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "RC4 Encrypt/Decrypt",
     },
+    {
+        .api = test_chacha20_poly1305_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "Chacha20-Poly1305 Encrypt/Decrypt",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

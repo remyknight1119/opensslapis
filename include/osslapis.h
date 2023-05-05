@@ -105,5 +105,13 @@ int osslapis_rc4_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl);
 int osslapis_providers_load(const char *legacy_lib);
+int osslapis_chacha20_poly1305_encrypt(unsigned char *plaintext,
+                        int plaintext_len, unsigned char *key,
+                        unsigned char *nonce, unsigned char *ciphertext,
+                        unsigned char *tag);
+int osslapis_chacha20_poly1305_decrypt(unsigned char *ciphertext,
+                        int ciphertext_len, unsigned char *key,
+                        unsigned char *nonce, unsigned char *tag,
+                        unsigned char *plaintext);
 
 #endif
