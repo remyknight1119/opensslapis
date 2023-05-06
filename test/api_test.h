@@ -50,5 +50,6 @@ int test_rsa_key_gen(void);
 int test_rc4_encrypt_decrypt(void);
 int test_load_pkcs12_cert(void);
 int test_chacha20_poly1305_encrypt_decrypt(void);
+int test_chacha20_encrypt_decrypt(void);
 
 #endif

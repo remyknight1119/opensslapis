@@ -9,9 +9,9 @@
 #include <string.h>
 #include <openssl/evp.h>
 
-int osslapis_chacha20_poly1305_encrypt(unsigned char *plaintext, int plaintext_len,
-        unsigned char *key, unsigned char *nonce,
-        unsigned char *ciphertext, unsigned char *tag)
+int osslapis_chacha20_encrypt(unsigned char *plaintext, int plaintext_len,
+                      unsigned char *key, unsigned char *nonce,
+                      unsigned char *ciphertext)
 {
     EVP_CIPHER_CTX *ctx;
     int len, ciphertext_len;
@@ -21,7 +21,7 @@ int osslapis_chacha20_poly1305_encrypt(unsigned char *plaintext, int plaintext_l
         return -1;
 
     /* Initialize the encryption operation */
-    if (1 != EVP_EncryptInit_ex(ctx, EVP_chacha20_poly1305(), NULL, NULL, NULL))
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_chacha20(), NULL, NULL, NULL))
         return -1;
 
     /* Set the key and nonce */
@@ -38,19 +38,15 @@ int osslapis_chacha20_poly1305_encrypt(unsigned char *plaintext, int plaintext_l
         return -1;
     ciphertext_len += len;
 
-    /* Get the tag */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, 16, tag))
-        return -1;
-
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
     return ciphertext_len;
 }
 
-int osslapis_chacha20_poly1305_decrypt(unsigned char *ciphertext, int ciphertext_len,
-        unsigned char *key, unsigned char *nonce,
-        unsigned char *tag, unsigned char *plaintext)
+int osslapis_chacha20_decrypt(unsigned char *ciphertext, int ciphertext_len,
+                      unsigned char *key, unsigned char *nonce,
+                      unsigned char *plaintext)
 {
     EVP_CIPHER_CTX *ctx;
     int len, plaintext_len;
@@ -60,15 +56,11 @@ int osslapis_chacha20_poly1305_decrypt(unsigned char *ciphertext, int ciphertext
         return -1;
 
     /* Initialize the decryption operation */
-    if (1 != EVP_DecryptInit_ex(ctx, EVP_chacha20_poly1305(), NULL, NULL, NULL))
+    if (1 != EVP_DecryptInit_ex(ctx, EVP_chacha20(), NULL, NULL, NULL))
         return -1;
 
     /* Set the key and nonce */
     if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, nonce))
-        return -1;
-
-    /* Set the tag */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, 16, tag))
         return -1;
 
     /* Perform the decryption */

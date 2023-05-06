@@ -113,5 +113,11 @@ int osslapis_chacha20_poly1305_decrypt(unsigned char *ciphertext,
                         int ciphertext_len, unsigned char *key,
                         unsigned char *nonce, unsigned char *tag,
                         unsigned char *plaintext);
+int osslapis_chacha20_encrypt(unsigned char *plaintext, int plaintext_len,
+                      unsigned char *key, unsigned char *nonce,
+                      unsigned char *ciphertext);
+int osslapis_chacha20_decrypt(unsigned char *ciphertext, int ciphertext_len,
+                      unsigned char *key, unsigned char *nonce,
+                      unsigned char *plaintext);
 
 #endif
