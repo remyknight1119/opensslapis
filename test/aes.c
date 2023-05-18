@@ -172,18 +172,27 @@ int test_aes_cfb_encrypt_decrypt(void)
 
 int test_aes_ccm_encrypt_decrypt(void)
 {
-    unsigned char *key = (unsigned char *)"01234567890123456789012345678901";
-    unsigned char *nonce = (unsigned char *)"012345678901";
-    unsigned char plaintext[] = "The quick brown fox jumps over the lazy dog";
+    unsigned char key[128];
+    unsigned char nonce[EVP_CCM_TLS_IV_LEN];
+    unsigned char plaintext[2048];
+    char *key_str = "01234567890123456789012345678901";
+    char *iv = "012345678901";
+    char *plaintext_str = "The quick brown fox jumps over the lazy dog";
     unsigned char ciphertext[128];
     unsigned char decryptedtext[128];
     unsigned char tag[EVP_CCM_TLS_TAG_LEN] = {};
+    size_t plen = 0;
 
     int decryptedtext_len, ciphertext_len;
 
+    str2hex(key, key_str, strlen(key_str));
+    str2hex(nonce, iv, strlen(iv));
+    str2hex(plaintext, plaintext_str, strlen(plaintext_str));
+
+    plen = strlen(plaintext_str)/2;
     /* Encrypt the plaintext */
-    ciphertext_len = osslapis_aes_ccm_encrypt(plaintext, sizeof(plaintext) - 1,
-                                     key, nonce, NULL, 0, ciphertext, tag);
+    ciphertext_len = osslapis_aes_ccm_encrypt(plaintext, plen, key, nonce, NULL,
+                        0, ciphertext, tag);
 
     printf("clen = %d\n", ciphertext_len);
     /* Print the encrypted text */
@@ -196,17 +205,15 @@ int test_aes_ccm_encrypt_decrypt(void)
     decryptedtext_len = osslapis_aes_ccm_decrypt(ciphertext, ciphertext_len,
                                          key, nonce, NULL, 0,
                                          tag, decryptedtext);
-    if (decryptedtext_len <= 0) {
+    if (decryptedtext_len != plen) {
         printf("CCM decrypt failed(%d)\n", decryptedtext_len);
         return -1;
     }
 
-    /* Add a null terminator. We are expecting printable text */
-    decryptedtext[decryptedtext_len] = '\0';
-
-    /* Print the decrypted text */
-    printf("Decrypted text is:\n");
-    printf("%s\n", decryptedtext);
+    if (memcmp(plaintext, decryptedtext, plen)) {
+        printf("CCM decrypt invalid\n");
+        return -1;
+    }
 
     return 0;
 }
