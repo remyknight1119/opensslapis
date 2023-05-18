@@ -172,3 +172,109 @@ int osslapis_aes_cfb_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                                     in, inl);
 }
 
+int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
+                        unsigned char *key, unsigned char *nonce,
+                        unsigned char *aad, int aad_len,
+                        unsigned char *ciphertext, unsigned char *tag)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len, ciphertext_len;
+
+    /* Create and initialize the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        return -1;
+    }
+
+    /* Initialize the encryption operation */
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL)) {
+        goto err;
+    }
+
+    /* Set IV len */
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, EVP_CCM_TLS_IV_LEN, NULL)) {
+        goto err;
+    }
+
+    /* Set Tag len */
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, EVP_CCM_TLS_TAG_LEN, NULL)) {
+        goto err;
+    }
+
+    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+        goto err;
+    }
+
+    /* Perform the encryption */
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)) {
+        goto err;
+    }
+    ciphertext_len = len;
+
+    /* Finalize the encryption and get the tag */
+    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) {
+        goto err;
+    }
+
+    ciphertext_len += len;
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, EVP_CCM_TLS_TAG_LEN, tag)) {
+        goto err;
+    }
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return ciphertext_len;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    return -1;
+}
+
+int osslapis_aes_ccm_decrypt(unsigned char *ciphertext, int ciphertext_len,
+                     unsigned char *key, unsigned char *nonce,
+                     unsigned char *aad, int aad_len,
+                     unsigned char *tag, unsigned char *plaintext)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len, plaintext_len;
+
+    /* Create and initialize the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        return -1;
+    }
+
+    /* Initialize the decryption operation */
+    if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL)) {
+        goto err;
+    }
+
+    /* Set the key and nonce */
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, EVP_CCM_TLS_IV_LEN, NULL)) {
+        goto err;
+    }
+
+    /* Set the tag */
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, EVP_CCM_TLS_TAG_LEN, tag)) {
+        goto err;
+    }
+
+    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+        goto err;
+    }
+
+    /* Perform the decryption */
+    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len)) {
+        printf("Decrypt update failed(%d)\n", ciphertext_len);
+        goto err;
+    }
+    plaintext_len = len;
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return plaintext_len;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    return -1;
+}
+
+

@@ -138,6 +138,11 @@ static OapisApi kOsslApis[] = {
         .cert_type = OAPIS_KEY_TYPE_UNKNOW,
         .msg = "Chacha20 Encrypt/Decrypt",
     },
+    {
+        .api = test_aes_ccm_encrypt_decrypt,
+        .cert_type = OAPIS_KEY_TYPE_UNKNOW,
+        .msg = "AES CCM Encrypt/Decrypt",
+    },
 };
 
 #define TEST_APIS_NUM OAPIS_NELEM(kOsslApis)

@@ -170,4 +170,44 @@ int test_aes_cfb_encrypt_decrypt(void)
     return 0;
 }
 
+int test_aes_ccm_encrypt_decrypt(void)
+{
+    unsigned char *key = (unsigned char *)"01234567890123456789012345678901";
+    unsigned char *nonce = (unsigned char *)"012345678901";
+    unsigned char plaintext[] = "The quick brown fox jumps over the lazy dog";
+    unsigned char ciphertext[128];
+    unsigned char decryptedtext[128];
+    unsigned char tag[EVP_CCM_TLS_TAG_LEN] = {};
+
+    int decryptedtext_len, ciphertext_len;
+
+    /* Encrypt the plaintext */
+    ciphertext_len = osslapis_aes_ccm_encrypt(plaintext, sizeof(plaintext) - 1,
+                                     key, nonce, NULL, 0, ciphertext, tag);
+
+    printf("clen = %d\n", ciphertext_len);
+    /* Print the encrypted text */
+    printf("Ciphertext is:\n");
+    for (int i = 0; i < ciphertext_len; i++)
+        printf("%02x", ciphertext[i]);
+    printf("\n");
+
+    /* Decrypt the ciphertext */
+    decryptedtext_len = osslapis_aes_ccm_decrypt(ciphertext, ciphertext_len,
+                                         key, nonce, NULL, 0,
+                                         tag, decryptedtext);
+    if (decryptedtext_len <= 0) {
+        printf("CCM decrypt failed(%d)\n", decryptedtext_len);
+        return -1;
+    }
+
+    /* Add a null terminator. We are expecting printable text */
+    decryptedtext[decryptedtext_len] = '\0';
+
+    /* Print the decrypted text */
+    printf("Decrypted text is:\n");
+    printf("%s\n", decryptedtext);
+
+    return 0;
+}
 

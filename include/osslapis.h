@@ -71,6 +71,14 @@ int osslapis_aes_cfb_encrypt(unsigned char *key, int keylen, unsigned char *iv,
 int osslapis_aes_cfb_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                         int ivlen, unsigned char *out, int *outl,
                         const unsigned char *in, int inl);
+int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
+                        unsigned char *key, unsigned char *nonce,
+                        unsigned char *aad, int aad_len,
+                        unsigned char *ciphertext, unsigned char *tag);
+int osslapis_aes_ccm_decrypt(unsigned char *ciphertext, int ciphertext_len,
+                        unsigned char *key, unsigned char *nonce,
+                        unsigned char *aad, int aad_len,
+                        unsigned char *tag, unsigned char *plaintext);
 int osslapis_rsa_sign(EVP_PKEY *pkey, const EVP_MD *md, unsigned char *sig,
                     size_t *siglen, const unsigned char *in, size_t inlen,
                     int pad);
