@@ -172,21 +172,17 @@ int osslapis_aes_cfb_decrypt(unsigned char *key, int keylen, unsigned char *iv,
                                     in, inl);
 }
 
-int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
-                        unsigned char *key, unsigned char *nonce,
-                        unsigned char *aad, int aad_len,
-                        unsigned char *ciphertext, unsigned char *tag)
+static EVP_CIPHER_CTX *AesCcmCipherInit(unsigned char *key, int enc)
 {
     EVP_CIPHER_CTX *ctx;
-    int len, ciphertext_len;
 
     /* Create and initialize the context */
     if (!(ctx = EVP_CIPHER_CTX_new())) {
-        return -1;
+        return NULL;
     }
 
     /* Initialize the encryption operation */
-    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL)) {
+    if (1 != EVP_CipherInit(ctx, EVP_aes_128_ccm(), NULL, NULL, enc)) {
         goto err;
     }
 
@@ -200,7 +196,30 @@ int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
         goto err;
     }
 
-    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+    if (1 != EVP_CipherInit(ctx, NULL, key, NULL, enc)) {
+        goto err;
+    }
+
+    return ctx;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    return NULL;
+}
+
+int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
+                        unsigned char *key, unsigned char *nonce,
+                        unsigned char *aad, int aad_len,
+                        unsigned char *ciphertext, unsigned char *tag)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len, ciphertext_len;
+
+    ctx = AesCcmCipherInit(key, 1);
+    if (ctx == NULL) {
+        return -1;
+    }
+
+    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, NULL, nonce)) {
         goto err;
     }
 
@@ -248,27 +267,17 @@ int osslapis_aes_ccm_decrypt(unsigned char *ciphertext, int ciphertext_len,
     EVP_CIPHER_CTX *ctx;
     int len, plaintext_len;
 
+    ctx = AesCcmCipherInit(key, 0);
     /* Create and initialize the context */
-    if (!(ctx = EVP_CIPHER_CTX_new())) {
+    if (ctx == NULL) {
         return -1;
     }
 
-    /* Initialize the decryption operation */
-    if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL)) {
-        goto err;
-    }
-
-    /* Set the key and nonce */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, EVP_CCM_TLS_IV_LEN, NULL)) {
-        goto err;
-    }
-
-    /* Set the tag */
     if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, EVP_CCM_TLS_TAG_LEN, tag)) {
         goto err;
     }
 
-    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, NULL, nonce)) {
         goto err;
     }
 

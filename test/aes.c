@@ -205,12 +205,16 @@ int test_aes_ccm_encrypt_decrypt(void)
     }
 
 #if 0
-    printf("clen = %d\n", ciphertext_len);
     /* Print the encrypted text */
     printf("Ciphertext is:\n");
     for (int i = 0; i < ciphertext_len; i++)
         printf("%02x", ciphertext[i]);
     printf("\n");
+    printf("Tag is:\n");
+    for (int i = 0; i < EVP_CCM_TLS_TAG_LEN; i++)
+        printf("%02x", tag[i]);
+    printf("\n");
+
 #endif
 
     /* Decrypt the ciphertext */
