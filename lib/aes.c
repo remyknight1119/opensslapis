@@ -204,8 +204,19 @@ int osslapis_aes_ccm_encrypt(unsigned char *plaintext, int plaintext_len,
         goto err;
     }
 
+    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len)) {
+        printf("Encrypt update NULL failed\n");
+        goto err;
+    }
+
+    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len)) {
+        printf("Encrypt update AAD failed(%d)\n", aad_len);
+        goto err;
+    }
+
     /* Perform the encryption */
     if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)) {
+        printf("Encrypt update plaintext failed\n");
         goto err;
     }
     ciphertext_len = len;
@@ -261,9 +272,21 @@ int osslapis_aes_ccm_decrypt(unsigned char *ciphertext, int ciphertext_len,
         goto err;
     }
 
+    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, NULL, ciphertext_len)) {
+        printf("Encrypt update NULL failed\n");
+        ERR_print_errors_fp(stderr);
+        goto err;
+    }
+
+    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_len)) {
+        printf("Encrypt update aad failed\n");
+        goto err;
+    }
+
     /* Perform the decryption */
     if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len)) {
-        printf("Decrypt update failed(%d)\n", ciphertext_len);
+        printf("Decrypt update plaintext failed(%d)\n", ciphertext_len);
+        ERR_print_errors_fp(stderr);
         goto err;
     }
     plaintext_len = len;
