@@ -234,3 +234,42 @@ int test_aes_ccm_encrypt_decrypt(void)
     return 0;
 }
 
+int test_aes_gcm_encrypt_decrypt(void)
+{
+    char *iv_str = "187C22FE91E3D7E6C408A615";
+    char *p_str = "0644664194C4BA5D8BC6381A2EC681C6254695949255B01097022F3C01CD5835F48E3CA28784DD3B40479B350BD37FF19C6E4409ABF69E0B78FF11FD6251A571AE3DD183398A51F89CE7AF058598C8127F9F693014185EBE5B220CEA19D882FED001FB18335FE3F4D0188500000F00010408040100461F89717F6B730C0D2B90E11ED1E349CA2A095A7B2E098312A596F5F8A24C28DA62E690";
+    unsigned char key[32];
+    unsigned char iv[12];
+    unsigned char plaintext[153];
+    unsigned char ciphertext[2048];
+    unsigned char decryptedtext[2048];
+    unsigned char tag[EVP_GCM_TLS_TAG_LEN] = {};
+    int ciphertext_len = 0;
+    int plaintext_len = 0;
+
+    memset(key, 'k', sizeof(key));
+    str2hex(iv, iv_str, strlen(iv_str));
+    str2hex(plaintext, p_str, strlen(p_str));
+
+    ciphertext_len = osslapis_aes_gcm_encrypt(plaintext, sizeof(plaintext), key,
+                        iv, ciphertext, tag);
+
+    if (ciphertext_len <= 0) {
+        printf("Encrypt failed\n");
+        return -1;
+    }
+
+    plaintext_len = osslapis_aes_gcm_decrypt(ciphertext, ciphertext_len, key,
+                        iv, decryptedtext, tag);
+    if (plaintext_len != sizeof(plaintext)) {
+        printf("GCM decrypt failed(%d)\n", plaintext_len);
+        return -1;
+    }
+
+    if (memcmp(plaintext, decryptedtext, plaintext_len)) {
+        printf("CCM decrypt invalid\n");
+        return -1;
+    }
+
+    return 0;
+}

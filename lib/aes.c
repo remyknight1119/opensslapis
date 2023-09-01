@@ -309,4 +309,105 @@ err:
     return -1;
 }
 
+int osslapis_aes_gcm_encrypt(unsigned char *plaintext, int plaintext_len,
+                        unsigned char *key, unsigned char *nonce,
+                        unsigned char *ciphertext, unsigned char *tag)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len, ciphertext_len;
+
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        goto err;
+    }
+
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL)) {
+        goto err;
+    }
+
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, EVP_GCM_TLS_EXPLICIT_IV_LEN, NULL)) {
+        goto err;
+    }
+
+    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+        goto err;
+    }
+
+    /* Perform the encryption */
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)) {
+        printf("Encrypt update plaintext failed\n");
+        goto err;
+    }
+    ciphertext_len = len;
+
+    /* Finalize the encryption and get the tag */
+    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) {
+        goto err;
+    }
+
+    ciphertext_len += len;
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, EVP_GCM_TLS_TAG_LEN, tag)) {
+        goto err;
+    }
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return ciphertext_len;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    return -1;
+}
+
+int osslapis_aes_gcm_decrypt(unsigned char *ciphertext, int ciphertext_len,
+                     unsigned char *key, unsigned char *nonce,
+                     unsigned char *plaintext, unsigned char *tag)
+{
+    EVP_CIPHER_CTX *ctx;
+    int len, plaintext_len;
+
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        goto err;
+    }
+
+    if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL)) {
+        printf("Decrypt Init failed\n");
+        goto err;
+    }
+
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, EVP_GCM_TLS_EXPLICIT_IV_LEN, NULL)) {
+        printf("Decrypt Cipher set IV failed\n");
+        goto err;
+    }
+
+    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, nonce)) {
+        printf("Decrypt Init failed\n");
+        goto err;
+    }
+
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, EVP_GCM_TLS_TAG_LEN, tag)) {
+        printf("Decrypt Cipher set TAG failed\n");
+        goto err;
+    }
+
+    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len)) {
+        printf("Decrypt update plaintext failed\n");
+        goto err;
+    }
+    plaintext_len = len;
+
+    if (1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len)) {
+        OSSLAPIS_LOG("EVP Cipher final failed: %s\n", OSSLAPIS_ERR_STR());
+        goto err;
+    }
+
+    plaintext_len += len;
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return plaintext_len;
+err:
+    EVP_CIPHER_CTX_free(ctx);
+    return -1;
+}
+
 

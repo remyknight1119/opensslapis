@@ -39,7 +39,7 @@ int osslapis_providers_load(const char *legacy_lib)
 
     provider_init_fn = dlsym(dlhan, "OSSL_provider_init");
     if (provider_init_fn == NULL) {
-        printf("Load func failed(%s)\n", dlerror());
+        printf("Load func from %s failed(%s)\n", legacy_lib, dlerror());
         goto out;
     }
 
